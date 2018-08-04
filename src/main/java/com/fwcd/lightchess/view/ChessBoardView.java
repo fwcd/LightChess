@@ -31,27 +31,12 @@ public class ChessBoardView implements Viewable {
 	private int fieldWidth;
 	private int fieldHeight;
 	
-	private static class FloatingChessPieceView {
-		ChessPieceView piece;
-		ChessFieldModel origin;
-		Vector2D pos;
-		Vector2D offset;
-		
-		public FloatingChessPieceView(ChessPieceView piece, ChessFieldModel origin, Vector2D pos, Vector2D offset) {
-			this.piece = piece;
-			this.origin = origin;
-			this.pos = pos;
-			this.offset = offset;
-		}
-	}
-	
 	public ChessBoardView(ChessBoardModel model) {
 		this.model = model;
 		view = new RenderPanel(this::render);
 		fields = new ChessFieldView[ChessConstants.RANKS][ChessConstants.FILES];
 		
 		setupFields();
-		setupListeners();
 	}
 	
 	private void setupFields() {
@@ -65,74 +50,30 @@ public class ChessBoardView implements Viewable {
 		}
 	}
 	
-	private void setupListeners() {
-		MouseHandler handler = new MouseHandler() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				Vector2D pos = posOf(e);
-				for (ChessFieldView[] rank : fields) {
-					for (ChessFieldView field : rank) {
-						boolean boundsContainPos = field.getBounds().filter(it -> it.contains(pos)).isPresent();
-						if (boundsContainPos) {
-							field.getPiece().ifPresent(piece -> {
-								Rectangle2D bounds = field.getBounds().orElseThrow(IllegalStateException::new);
-								Vector2D offset = bounds.getTopLeft().sub(pos);
-								ChessFieldModel fieldModel = field.getModel();
-								FloatingChessPieceView dragged = new FloatingChessPieceView(piece, fieldModel, pos, offset);
-								
-								fieldModel.setPiece(Optional.empty());
-								floating = Optional.of(dragged);
-								onDragStart(dragged);
-							});
-							return;
-						}
-					}
-				}
-			}
-			
-			@Override
-			public void mouseDragged(MouseEvent e) {
-				floating.ifPresent(floating -> {
-					floating.pos = posOf(e);
-					view.repaint();
-				});
-			}
-			
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				floating.ifPresent(dragged -> {
-					Optional<ChessFieldModel> fieldModel = toChessPosition(posOf(e)).map(model::fieldAt);
-					ChessPieceModel pieceModel = dragged.piece.getModel();
-					if (fieldModel.isPresent()) {
-						fieldModel.orElse(null).setPiece(pieceModel);
-						onDrop(dragged);
-					} else {
-						dragged.origin.setPiece(pieceModel);
-					}
-					view.repaint();
-				});
-				floating = Optional.empty();
-			}
-		};
-		handler.connect(view);
+	public void setFloating(Optional<FloatingChessPieceView> floating) {
+		this.floating = floating;
+	}
+	
+	public Optional<FloatingChessPieceView> getFloating() {
+		return floating;
+	}
+	
+	public ChessFieldView[][] getFields() {
+		return fields;
 	}
 	
 	public void addMouseHandler(MouseHandler handler) {
 		handler.connect(view);
 	}
 	
-	private Optional<ChessPosition> toChessPosition(Vector2D pixelPos) {
+	public Optional<ChessPosition> toChessPosition(Vector2D pixelPos) {
 		int x = (int) pixelPos.getX() / fieldWidth;
 		int y = (int) pixelPos.getY() / fieldHeight;
 		return ChessPosition.ifValidAt(x, y);
 	}
 	
-	private void onDragStart(FloatingChessPieceView dragged) {
-		// TODO
-	}
-	
-	private void onDrop(FloatingChessPieceView dragged) {
-		// TODO
+	public void repaint() {
+		view.repaint();
 	}
 	
 	private void render(Graphics2D g2d, Dimension canvasSize) {
@@ -149,7 +90,8 @@ public class ChessBoardView implements Viewable {
 		}
 		
 		// Render a floating chess piece (if present)
-		floating.ifPresent(it -> it.piece.renderAt(g2d, it.pos.add(it.offset), fieldWidth, fieldHeight));
+		floating.ifPresent(it -> it.getPiece()
+				.renderAt(g2d, it.getPos().add(it.getOffset()), fieldWidth, fieldHeight));
 	}
 	
 	@Override
