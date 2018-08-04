@@ -7,24 +7,22 @@ import com.fwcd.lightchess.model.ChessBoardModel;
 import com.fwcd.lightchess.model.ChessPosition;
 import com.fwcd.lightchess.model.PlayerColor;
 
-public class KingModel implements ChessPieceModel {
+public class RookModel implements ChessPieceModel {
 	private final PlayerColor color;
 	
-	public KingModel(PlayerColor color) {
+	public RookModel(PlayerColor color) {
 		this.color = color;
 	}
 	
 	@Override
 	public List<ChessPosition> getPossibleMoves(ChessPosition pos, ChessBoardModel board) {
-		// TODO: Castling
 		List<ChessPosition> targets = new ArrayList<>();
-		
-		for (int dy=-1; dy<=1; dy++) {
-			for (int dx=-1; dx<=1; dx++) {
-				pos.plus(dx, dy).ifPresent(targets::add);
-			}
-		}
-		
+		// Horizontals
+		PieceUtils.addPositionsUntilHit(1, 0, pos, targets, board);
+		PieceUtils.addPositionsUntilHit(-1, 0, pos, targets, board);
+		// Verticals
+		PieceUtils.addPositionsUntilHit(0, 1, pos, targets, board);
+		PieceUtils.addPositionsUntilHit(0, -1, pos, targets, board);
 		return targets;
 	}
 	

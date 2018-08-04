@@ -5,8 +5,15 @@ import java.util.List;
 
 import com.fwcd.lightchess.model.ChessBoardModel;
 import com.fwcd.lightchess.model.ChessPosition;
+import com.fwcd.lightchess.model.PlayerColor;
 
 public class QueenModel implements ChessPieceModel {
+	private final PlayerColor color;
+	
+	public QueenModel(PlayerColor color) {
+		this.color = color;
+	}
+	
 	@Override
 	public List<ChessPosition> getPossibleMoves(ChessPosition pos, ChessBoardModel board) {
 		List<ChessPosition> targets = new ArrayList<>();
@@ -23,4 +30,6 @@ public class QueenModel implements ChessPieceModel {
 		PieceUtils.addPositionsUntilHit(0, -1, pos, targets, board);
 		return targets;
 	}
+	
+	public PlayerColor getColor() { return color; }
 }
