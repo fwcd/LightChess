@@ -18,6 +18,11 @@ public class ChessBoardModel {
 	
 	public ChessBoardModel() {
 		fields = new ChessFieldModel[ChessConstants.RANKS][ChessConstants.FILES];
+		for (int y=0; y<ChessConstants.RANKS; y++) {
+			for (int x=0; x<ChessConstants.FILES; x++) {
+				fields[y][x] = new ChessFieldModel(ChessPosition.at(x, y));
+			}
+		}
 	}
 	
 	public static ChessBoardModel withInitialSetup() {
@@ -54,7 +59,7 @@ public class ChessBoardModel {
 	}
 	
 	public void placeAt(int x, int y, ChessPieceModel piece) {
-		placeAt(x, y, piece);
+		placeAt(ChessPosition.at(x, y), piece);
 	}
 	
 	public Stream<ChessFieldModel> fields() {

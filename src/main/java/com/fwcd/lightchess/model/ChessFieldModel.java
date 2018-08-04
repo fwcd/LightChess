@@ -3,8 +3,8 @@ package com.fwcd.lightchess.model;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import com.fwcd.fructose.Observable;
 import com.fwcd.lightchess.model.piece.ChessPieceModel;
-import com.fwcd.lightchess.utils.Observable;
 
 public class ChessFieldModel {
 	private final ChessPosition position;

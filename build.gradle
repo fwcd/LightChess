@@ -5,11 +5,13 @@ plugins {
 
 mainClassName = 'com.fwcd.lightchess.LightChessMain'
 
-dependencies {
-    implementation 'com.google.guava:guava:23.0'
-    testImplementation 'junit:junit:4.12'
-}
-
 repositories {
     jcenter()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation 'com.google.guava:guava:23.0'
+    implementation 'com.github.fwcd:Fructose:b4a68649eca00139fb76256181efc12cf6ecf9c4'
+    testImplementation 'junit:junit:4.12'
 }
