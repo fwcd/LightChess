@@ -12,12 +12,12 @@ final class PieceUtils {
 		ChessPosition current = start.plus(dx, dy).orElse(null);
 		while (current != null) {
 			positions.add(current);
-			current = current.plus(dx, dy).orElse(null);
 			if ((current != null) && board.fieldAt(current).hasPiece()) {
 				// Hit a piece
 				positions.add(current);
 				return;
 			}
+			current = current.plus(dx, dy).orElse(null);
 		}
 		// Hit the board bounds
 	}
