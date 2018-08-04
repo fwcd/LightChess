@@ -22,6 +22,7 @@ public class ChessFieldModel {
 	
 	public void observePiece(Consumer<Optional<ChessPieceModel>> observer) {
 		piece.listen(observer);
+		observer.accept(piece.get());
 	}
 	
 	public void setPiece(Optional<ChessPieceModel> piece) { this.piece.set(piece); }

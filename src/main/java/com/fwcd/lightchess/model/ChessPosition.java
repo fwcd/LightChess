@@ -37,12 +37,14 @@ public class ChessPosition {
 		return new ChessPosition(x, y);
 	}
 	
-	public Optional<ChessPosition> plus(int dx, int dy) {
-		int newX = x + dx;
-		int newY = y + dy;
-		if (isValidX(newX) && isValidY(newY)) {
-			return Optional.of(new ChessPosition(newX, newY));
+	public static Optional<ChessPosition> ifValidAt(int x, int y) {
+		if (isValidX(x) && isValidY(y)) {
+			return Optional.of(new ChessPosition(x, y));
 		} else return Optional.empty();
+	}
+	
+	public Optional<ChessPosition> plus(int dx, int dy) {
+		return ChessPosition.ifValidAt(x + dx, y + dy);
 	}
 	
 	public Optional<ChessPosition> minus(int dx, int dy) {
@@ -65,11 +67,11 @@ public class ChessPosition {
 	
 	public int getRank() { return ChessConstants.RANKS - y; }
 	
-	private boolean isValidX(int x) {
-		return (x >= 0) && (x <= ChessConstants.FILES);
+	private static boolean isValidX(int x) {
+		return (x >= 0) && (x < ChessConstants.FILES);
 	}
 	
-	private boolean isValidY(int y) {
-		return (y >= 0) && (y <= ChessConstants.RANKS);
+	private static boolean isValidY(int y) {
+		return (y >= 0) && (y < ChessConstants.RANKS);
 	}
 }

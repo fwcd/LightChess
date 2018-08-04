@@ -8,20 +8,42 @@ import java.util.Optional;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import com.fwcd.fructose.EventListenerList;
 import com.fwcd.fructose.geometry.Rectangle2D;
 import com.fwcd.fructose.geometry.Vector2D;
 import com.fwcd.fructose.swing.MouseHandler;
 import com.fwcd.fructose.swing.RenderPanel;
 import com.fwcd.fructose.swing.Viewable;
 import com.fwcd.lightchess.model.ChessBoardModel;
+import com.fwcd.lightchess.model.ChessFieldModel;
 import com.fwcd.lightchess.model.ChessPosition;
+import com.fwcd.lightchess.model.piece.ChessPieceModel;
 import com.fwcd.lightchess.utils.ChessConstants;
 
 public class ChessBoardView implements Viewable {
 	private final ChessBoardModel model;
 	private final ChessFieldView[][] fields;
+	private final ImageLoader imageLoader = new ImageLoader();
 	private final ChessBoardTheme theme = ChessBoardTheme.WOODEN;
 	private final JPanel view;
+	private Optional<FloatingChessPieceView> floating = Optional.empty();
+	
+	private int fieldWidth;
+	private int fieldHeight;
+	
+	private static class FloatingChessPieceView {
+		ChessPieceView piece;
+		ChessFieldModel origin;
+		Vector2D pos;
+		Vector2D offset;
+		
+		public FloatingChessPieceView(ChessPieceView piece, ChessFieldModel origin, Vector2D pos, Vector2D offset) {
+			this.piece = piece;
+			this.origin = origin;
+			this.pos = pos;
+			this.offset = offset;
+		}
+	}
 	
 	public ChessBoardView(ChessBoardModel model) {
 		this.model = model;
@@ -36,7 +58,7 @@ public class ChessBoardView implements Viewable {
 		boolean isDark = false;
 		for (int y=0; y<ChessConstants.RANKS; y++) {
 			for (int x=0; x<ChessConstants.FILES; x++) {
-				fields[y][x] = new ChessFieldView(model.fieldAt(ChessPosition.at(x, y)), theme, isDark);
+				fields[y][x] = new ChessFieldView(model.fieldAt(ChessPosition.at(x, y)), imageLoader, theme, isDark);
 				isDark = !isDark;
 			}
 			isDark = !isDark;
@@ -45,17 +67,23 @@ public class ChessBoardView implements Viewable {
 	
 	private void setupListeners() {
 		MouseHandler handler = new MouseHandler() {
-			private Optional<ChessFieldView> dragged = Optional.empty();
-			
 			@Override
 			public void mousePressed(MouseEvent e) {
 				Vector2D pos = posOf(e);
 				for (ChessFieldView[] rank : fields) {
 					for (ChessFieldView field : rank) {
-						Rectangle2D bounds = field.getBounds().orElse(null);
-						if ((bounds != null) && bounds.contains(pos)) {
-							dragged = Optional.of(field);
-							field.liftAt(pos, bounds.getTopLeft().sub(pos));
+						boolean boundsContainPos = field.getBounds().filter(it -> it.contains(pos)).isPresent();
+						if (boundsContainPos) {
+							field.getPiece().ifPresent(piece -> {
+								Rectangle2D bounds = field.getBounds().orElseThrow(IllegalStateException::new);
+								Vector2D offset = bounds.getTopLeft().sub(pos);
+								ChessFieldModel fieldModel = field.getModel();
+								FloatingChessPieceView dragged = new FloatingChessPieceView(piece, fieldModel, pos, offset);
+								
+								fieldModel.setPiece(Optional.empty());
+								floating = Optional.of(dragged);
+								onDragStart(dragged);
+							});
 							return;
 						}
 					}
@@ -64,24 +92,52 @@ public class ChessBoardView implements Viewable {
 			
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				dragged.ifPresent(dragged -> {
-					dragged.dragTo(posOf(e));
+				floating.ifPresent(floating -> {
+					floating.pos = posOf(e);
 					view.repaint();
 				});
 			}
 			
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				dragged.ifPresent(it -> it.drop());
-				dragged = Optional.empty();
+				floating.ifPresent(dragged -> {
+					Optional<ChessFieldModel> fieldModel = toChessPosition(posOf(e)).map(model::fieldAt);
+					ChessPieceModel pieceModel = dragged.piece.getModel();
+					if (fieldModel.isPresent()) {
+						fieldModel.orElse(null).setPiece(pieceModel);
+						onDrop(dragged);
+					} else {
+						dragged.origin.setPiece(pieceModel);
+					}
+					view.repaint();
+				});
+				floating = Optional.empty();
 			}
 		};
 		handler.connect(view);
 	}
 	
+	public void addMouseHandler(MouseHandler handler) {
+		handler.connect(view);
+	}
+	
+	private Optional<ChessPosition> toChessPosition(Vector2D pixelPos) {
+		int x = (int) pixelPos.getX() / fieldWidth;
+		int y = (int) pixelPos.getY() / fieldHeight;
+		return ChessPosition.ifValidAt(x, y);
+	}
+	
+	private void onDragStart(FloatingChessPieceView dragged) {
+		// TODO
+	}
+	
+	private void onDrop(FloatingChessPieceView dragged) {
+		// TODO
+	}
+	
 	private void render(Graphics2D g2d, Dimension canvasSize) {
-		int fieldWidth = canvasSize.width / fields[0].length;
-		int fieldHeight = canvasSize.height / fields.length;
+		fieldWidth = canvasSize.width / fields[0].length;
+		fieldHeight = canvasSize.height / fields.length;
 		
 		for (int y=0; y<fields.length; y++) {
 			for (int x=0; x<fields[y].length; x++) {
@@ -91,6 +147,9 @@ public class ChessBoardView implements Viewable {
 				field.render(g2d, canvasSize);
 			}
 		}
+		
+		// Render a floating chess piece (if present)
+		floating.ifPresent(it -> it.piece.renderAt(g2d, it.pos.add(it.offset), fieldWidth, fieldHeight));
 	}
 	
 	@Override

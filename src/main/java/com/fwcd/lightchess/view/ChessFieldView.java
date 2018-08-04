@@ -5,45 +5,52 @@ import java.awt.Graphics2D;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import com.fwcd.fructose.ListenerList;
 import com.fwcd.fructose.geometry.Rectangle2D;
-import com.fwcd.fructose.geometry.Vector2D;
 import com.fwcd.fructose.swing.Rendereable;
 import com.fwcd.lightchess.model.ChessFieldModel;
+import com.fwcd.lightchess.model.piece.ChessPieceModel;
 
 public class ChessFieldView implements Rendereable {
 	private final ChessFieldModel model;
 	private final ChessBoardTheme theme;
+	private final ImageLoader imageLoader;
 	private final boolean isDark;
-	private final ImageLoader imageLoader = new ImageLoader();
+	private Optional<ChessPieceView> piece = Optional.empty();
 	private Optional<Rectangle2D> bounds = Optional.empty();
-	private Optional<Vector2D> floatingPos = Optional.empty();
-	private Optional<Vector2D> floatingOffset = Optional.empty();
+	private ListenerList changeListeners = new ListenerList();
 	
-	public ChessFieldView(ChessFieldModel model, ChessBoardTheme theme, boolean isDark) {
+	public ChessFieldView(
+		ChessFieldModel model,
+		ImageLoader imageLoader,
+		ChessBoardTheme theme,
+		boolean isDark
+	) {
 		this.model = model;
 		this.theme = theme;
 		this.isDark = isDark;
+		this.imageLoader = imageLoader;
+		
+		setupModelListeners();
 	}
 	
-	public void liftAt(Vector2D floatingPos, Vector2D floatingOffset) {
-		this.floatingPos = Optional.of(floatingPos);
-		this.floatingOffset = Optional.of(floatingOffset);
+	private void setupModelListeners() {
+		model.observePiece(this::setPiece);
 	}
 	
-	public void dragTo(Vector2D floatingPos) {
-		this.floatingPos = Optional.of(floatingPos);
+	private void setPiece(Optional<ChessPieceModel> pieceModel) {
+		piece = pieceModel.map(it -> new ChessPieceView(it, imageLoader));
 	}
 	
-	public Optional<Vector2D> drop() {
-		Optional<Vector2D> pos = floatingPos;
-		floatingPos = Optional.empty();
-		floatingOffset = Optional.empty();
-		return pos;
-	}
+	public ChessFieldModel getModel() { return this.model; }
+	
+	public ListenerList getChangeListeners() { return changeListeners; }
 	
 	public void setBounds(Rectangle2D bounds) { this.bounds = Optional.of(bounds); }
 	
 	public Optional<Rectangle2D> getBounds() { return bounds; }
+	
+	public Optional<ChessPieceView> getPiece() { return piece; }
 	
 	@Override
 	public void render(Graphics2D g2d, Dimension canvasSize) {
@@ -55,8 +62,8 @@ public class ChessFieldView implements Rendereable {
 			(int) bounds.width(),
 			(int) bounds.height()
 		);
-		model.getPiece().ifPresent(it -> it.accept(
-			new ChessPieceRenderer(imageLoader, bounds, floatingPos, floatingOffset, g2d)
-		));
+		piece.ifPresent(it -> {
+			it.renderAt(g2d, bounds.getTopLeft(), (int) bounds.width(), (int) bounds.height());
+		});
 	}
 }
