@@ -11,7 +11,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.google.guava:guava:23.0'
+    implementation 'org.slf4j:slf4j-api:1.7.21'
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
     implementation 'com.github.fwcd:Fructose:0e34d9d11a55be4869f378087b3c25abeba36ea6'
     testImplementation 'junit:junit:4.12'
 }

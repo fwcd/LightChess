@@ -2,8 +2,10 @@ package com.fwcd.lightchess.view;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 
 import com.fwcd.fructose.geometry.Rectangle2D;
+import com.fwcd.fructose.geometry.Vector2D;
 import com.fwcd.fructose.io.ResourceFile;
 import com.fwcd.lightchess.model.PlayerColor;
 import com.fwcd.lightchess.model.piece.BishopModel;
@@ -15,12 +17,23 @@ import com.fwcd.lightchess.model.piece.QueenModel;
 import com.fwcd.lightchess.model.piece.RookModel;
 
 public class ChessPieceRenderer implements ChessPieceVisitor {
-	private final ImageLoader loader = new ImageLoader();
+	private final ImageLoader loader;
 	private final Rectangle2D bounds;
 	private final Graphics2D g2d;
+	private final Optional<Vector2D> floatingPos;
+	private final Optional<Vector2D> floatingOffset;
 	
-	public ChessPieceRenderer(Rectangle2D bounds, Graphics2D g2d) {
+	public ChessPieceRenderer(
+		ImageLoader loader,
+		Rectangle2D bounds,
+		Optional<Vector2D> floatingPos,
+		Optional<Vector2D> floatingOffset,
+		Graphics2D g2d
+	) {
+		this.loader = loader;
 		this.bounds = bounds;
+		this.floatingPos = floatingPos;
+		this.floatingOffset = floatingOffset;
 		this.g2d = g2d;
 	}
 	
@@ -45,10 +58,11 @@ public class ChessPieceRenderer implements ChessPieceVisitor {
 	private void drawPiece(String pieceName, PlayerColor color) {
 		String colorName = (color == PlayerColor.BLACK) ? "black" : "white";
 		BufferedImage img = loadPiece(colorName + pieceName + ".png");
+		Optional<Vector2D> floatingTopLeft = floatingPos.flatMap(it -> floatingOffset.map(offs -> it.add(offs)));
 		g2d.drawImage(
 			img,
-			(int) bounds.getX1(),
-			(int) bounds.getY1(),
+			floatingTopLeft.map(Vector2D::getX).orElse(bounds.getX1()).intValue(),
+			floatingTopLeft.map(Vector2D::getY).orElse(bounds.getY1()).intValue(),
 			(int) bounds.width(),
 			(int) bounds.height(),
 			null
