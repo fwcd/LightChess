@@ -12,6 +12,6 @@ repositories {
 
 dependencies {
     implementation 'com.google.guava:guava:23.0'
-    implementation 'com.github.fwcd:Fructose:b4a68649eca00139fb76256181efc12cf6ecf9c4'
+    implementation 'com.github.fwcd:Fructose:0e34d9d11a55be4869f378087b3c25abeba36ea6'
     testImplementation 'junit:junit:4.12'
 }

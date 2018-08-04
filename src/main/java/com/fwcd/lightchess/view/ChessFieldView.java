@@ -32,5 +32,6 @@ public class ChessFieldView implements Rendereable {
 			(int) bounds.width(),
 			(int) bounds.height()
 		);
+		model.getPiece().ifPresent(it -> it.accept(new ChessPieceRenderer(bounds, g2d)));
 	}
 }

@@ -10,7 +10,7 @@ import com.fwcd.lightchess.view.ChessBoardView;
 public class LightChessMain {
 	public static void main(String[] args) {
 		JFrame frame = new JFrame("LightChess");
-		frame.setSize(600, 600);
+		frame.setSize(750, 750);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		frame.add(new ChessBoardView(ChessBoardModel.withInitialSetup()).getView());
