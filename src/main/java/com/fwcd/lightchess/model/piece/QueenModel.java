@@ -31,5 +31,11 @@ public class QueenModel implements ChessPieceModel {
 		return targets;
 	}
 	
+	@Override
 	public PlayerColor getColor() { return color; }
+	
+	@Override
+	public void accept(ChessPieceVisitor visitor) {
+		visitor.visitQueen(this);
+	}
 }

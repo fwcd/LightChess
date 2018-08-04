@@ -28,5 +28,11 @@ public class KingModel implements ChessPieceModel {
 		return targets;
 	}
 	
+	@Override
 	public PlayerColor getColor() { return color; }
+	
+	@Override
+	public void accept(ChessPieceVisitor visitor) {
+		visitor.visitKing(this);
+	}
 }

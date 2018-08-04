@@ -34,5 +34,11 @@ public class KnightModel implements ChessPieceModel {
 		)).collect(Collectors.toList());
 	}
 	
+	@Override
 	public PlayerColor getColor() { return color; }
+	
+	@Override
+	public void accept(ChessPieceVisitor visitor) {
+		visitor.visitKnight(this);
+	}
 }

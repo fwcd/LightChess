@@ -10,5 +10,7 @@ import com.fwcd.lightchess.model.PlayerColor;
 public interface ChessPieceModel {
 	List<ChessPosition> getPossibleMoves(ChessPosition pos, ChessBoardModel board);
 	
+	void accept(ChessPieceVisitor visitor);
+	
 	PlayerColor getColor();
 }

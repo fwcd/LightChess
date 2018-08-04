@@ -50,5 +50,11 @@ public class PawnModel implements ChessPieceModel {
 		}
 	}
 	
+	@Override
 	public PlayerColor getColor() { return color; }
+	
+	@Override
+	public void accept(ChessPieceVisitor visitor) {
+		visitor.visitPawn(this);
+	}
 }
