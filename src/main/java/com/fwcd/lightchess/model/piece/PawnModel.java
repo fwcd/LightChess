@@ -1,8 +1,8 @@
 package com.fwcd.lightchess.model.piece;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import com.fwcd.lightchess.model.ChessBoardModel;
@@ -18,9 +18,9 @@ public class PawnModel implements ChessPieceModel {
 	}
 	
 	@Override
-	public List<ChessPosition> getPossibleMoves(ChessPosition pos, ChessBoardModel board) {
+	public Set<ChessPosition> getPossibleMoves(ChessPosition pos, ChessBoardModel board) {
 		// TODO: En passant and promotion
-		List<ChessPosition> targets = new ArrayList<>();
+		Set<ChessPosition> targets = new HashSet<>();
 		
 		stepFrom(pos).ifPresent(it -> {
 			if (!board.fieldAt(it).hasPiece()) {

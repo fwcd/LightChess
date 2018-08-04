@@ -74,4 +74,19 @@ public class ChessPosition {
 	private static boolean isValidY(int y) {
 		return (y >= 0) && (y < ChessConstants.RANKS);
 	}
+	
+	@Override
+	public String toString() {
+		return new StringBuilder().append(getFile()).append(getRank()).toString();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return (x == ((ChessPosition) obj).x) && (y == ((ChessPosition) obj).y);
+	}
+	
+	@Override
+	public int hashCode() {
+		return x * y * 31;
+	}
 }

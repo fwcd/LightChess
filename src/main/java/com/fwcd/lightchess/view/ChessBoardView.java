@@ -2,22 +2,20 @@ package com.fwcd.lightchess.view;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.event.MouseEvent;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import com.fwcd.fructose.EventListenerList;
 import com.fwcd.fructose.geometry.Rectangle2D;
 import com.fwcd.fructose.geometry.Vector2D;
 import com.fwcd.fructose.swing.MouseHandler;
 import com.fwcd.fructose.swing.RenderPanel;
 import com.fwcd.fructose.swing.Viewable;
 import com.fwcd.lightchess.model.ChessBoardModel;
-import com.fwcd.lightchess.model.ChessFieldModel;
 import com.fwcd.lightchess.model.ChessPosition;
-import com.fwcd.lightchess.model.piece.ChessPieceModel;
 import com.fwcd.lightchess.utils.ChessConstants;
 
 public class ChessBoardView implements Viewable {
@@ -26,6 +24,8 @@ public class ChessBoardView implements Viewable {
 	private final ImageLoader imageLoader = new ImageLoader();
 	private final ChessBoardTheme theme = ChessBoardTheme.WOODEN;
 	private final JPanel view;
+	
+	private Set<ChessPosition> highlightedFields = new HashSet<>();
 	private Optional<FloatingChessPieceView> floating = Optional.empty();
 	
 	private int fieldWidth;
@@ -50,18 +50,6 @@ public class ChessBoardView implements Viewable {
 		}
 	}
 	
-	public void setFloating(Optional<FloatingChessPieceView> floating) {
-		this.floating = floating;
-	}
-	
-	public Optional<FloatingChessPieceView> getFloating() {
-		return floating;
-	}
-	
-	public ChessFieldView[][] getFields() {
-		return fields;
-	}
-	
 	public void addMouseHandler(MouseHandler handler) {
 		handler.connect(view);
 	}
@@ -83,9 +71,16 @@ public class ChessBoardView implements Viewable {
 		for (int y=0; y<fields.length; y++) {
 			for (int x=0; x<fields[y].length; x++) {
 				ChessFieldView field = fields[y][x];
-				Vector2D pos = new Vector2D(x * fieldWidth, y * fieldHeight);
-				field.setBounds(new Rectangle2D(pos, fieldWidth, fieldHeight));
+				Vector2D pixelPos = new Vector2D(x * fieldWidth, y * fieldHeight);
+				ChessPosition pos = ChessPosition.at(x, y);
+				
+				field.setBounds(new Rectangle2D(pixelPos, fieldWidth, fieldHeight));
 				field.render(g2d, canvasSize);
+				
+				if (highlightedFields.contains(pos)) {
+					g2d.setColor(theme.getHighlightColor());
+					g2d.fillRect((int) pixelPos.getX(), (int) pixelPos.getY(), fieldWidth, fieldHeight);
+				}
 			}
 		}
 		
@@ -96,4 +91,14 @@ public class ChessBoardView implements Viewable {
 	
 	@Override
 	public JComponent getView() { return view; }
+	
+	public void setFloating(Optional<FloatingChessPieceView> floating) { this.floating = floating; }
+	
+	public Optional<FloatingChessPieceView> getFloating() { return floating; }
+	
+	public ChessFieldView[][] getFields() { return fields; }
+	
+	public void setHighlightedFields(Set<ChessPosition> highlightedFields) { this.highlightedFields = highlightedFields; }
+	
+	public Set<ChessPosition> getHighlightedFields() { return highlightedFields; }
 }

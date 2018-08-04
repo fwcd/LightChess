@@ -1,6 +1,7 @@
 package com.fwcd.lightchess.controller;
 
 import java.awt.event.MouseEvent;
+import java.util.Collections;
 import java.util.Optional;
 
 import javax.swing.JComponent;
@@ -10,6 +11,7 @@ import com.fwcd.fructose.geometry.Vector2D;
 import com.fwcd.fructose.swing.MouseHandler;
 import com.fwcd.lightchess.model.ChessBoardModel;
 import com.fwcd.lightchess.model.ChessFieldModel;
+import com.fwcd.lightchess.model.ChessPosition;
 import com.fwcd.lightchess.model.piece.ChessPieceModel;
 import com.fwcd.lightchess.view.ChessBoardView;
 import com.fwcd.lightchess.view.ChessFieldView;
@@ -72,6 +74,10 @@ public class ChessBoardController {
 		view.getFloating().ifPresent(dragged -> {
 			Optional<ChessFieldModel> fieldModel = view.toChessPosition(pos).map(model::fieldAt);
 			ChessPieceModel pieceModel = dragged.getPiece().getModel();
+			
+			// TODO: Validate moves in the model
+			// (using a FloatingChessPieceView?)
+			
 			if (fieldModel.isPresent()) {
 				fieldModel.orElse(null).setPiece(pieceModel);
 				onDrop(dragged);
@@ -84,11 +90,13 @@ public class ChessBoardController {
 	}
 	
 	private void onDragStart(FloatingChessPieceView dragged) {
-		// TODO
+		ChessPieceModel pieceModel = dragged.getPiece().getModel();
+		ChessPosition startPos = dragged.getOrigin().getPosition();
+		view.setHighlightedFields(pieceModel.getPossibleMoves(startPos, model));
 	}
 	
 	private void onDrop(FloatingChessPieceView dragged) {
-		// TODO
+		view.setHighlightedFields(Collections.emptySet());
 	}
 	
 	public JComponent getViewComponent() {

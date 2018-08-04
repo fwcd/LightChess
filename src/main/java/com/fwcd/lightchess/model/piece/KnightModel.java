@@ -1,6 +1,6 @@
 package com.fwcd.lightchess.model.piece;
 
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,7 +17,7 @@ public class KnightModel implements ChessPieceModel {
 	}
 	
 	@Override
-	public List<ChessPosition> getPossibleMoves(ChessPosition pos, ChessBoardModel board) {
+	public Set<ChessPosition> getPossibleMoves(ChessPosition pos, ChessBoardModel board) {
 		return Streams.filterPresent(Stream.of(
 			// Top-left
 			pos.plus(-2, -1),
@@ -31,7 +31,7 @@ public class KnightModel implements ChessPieceModel {
 			// Bottom-right
 			pos.plus(2, 1),
 			pos.plus(1, 2)
-		)).collect(Collectors.toList());
+		)).collect(Collectors.toSet());
 	}
 	
 	@Override

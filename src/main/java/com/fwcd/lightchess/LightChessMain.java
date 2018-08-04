@@ -6,7 +6,6 @@ import javax.swing.JFrame;
 
 import com.fwcd.lightchess.controller.ChessBoardController;
 import com.fwcd.lightchess.model.ChessBoardModel;
-import com.fwcd.lightchess.view.ChessBoardView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

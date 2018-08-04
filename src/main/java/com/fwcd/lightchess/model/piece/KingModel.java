@@ -1,7 +1,7 @@
 package com.fwcd.lightchess.model.piece;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.fwcd.lightchess.model.ChessBoardModel;
 import com.fwcd.lightchess.model.ChessPosition;
@@ -15,9 +15,9 @@ public class KingModel implements ChessPieceModel {
 	}
 	
 	@Override
-	public List<ChessPosition> getPossibleMoves(ChessPosition pos, ChessBoardModel board) {
+	public Set<ChessPosition> getPossibleMoves(ChessPosition pos, ChessBoardModel board) {
 		// TODO: Castling
-		List<ChessPosition> targets = new ArrayList<>();
+		Set<ChessPosition> targets = new HashSet<>();
 		
 		for (int dy=-1; dy<=1; dy++) {
 			for (int dx=-1; dx<=1; dx++) {

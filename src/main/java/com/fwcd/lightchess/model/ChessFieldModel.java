@@ -25,6 +25,8 @@ public class ChessFieldModel {
 		observer.accept(piece.get());
 	}
 	
+	public ChessPosition getPosition() { return position; }
+	
 	public void setPiece(Optional<ChessPieceModel> piece) { this.piece.set(piece); }
 	
 	public void setPiece(ChessPieceModel piece) { this.piece.set(Optional.of(piece)); }

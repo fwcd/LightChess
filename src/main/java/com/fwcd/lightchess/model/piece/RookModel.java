@@ -1,7 +1,7 @@
 package com.fwcd.lightchess.model.piece;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.fwcd.lightchess.model.ChessBoardModel;
 import com.fwcd.lightchess.model.ChessPosition;
@@ -15,8 +15,8 @@ public class RookModel implements ChessPieceModel {
 	}
 	
 	@Override
-	public List<ChessPosition> getPossibleMoves(ChessPosition pos, ChessBoardModel board) {
-		List<ChessPosition> targets = new ArrayList<>();
+	public Set<ChessPosition> getPossibleMoves(ChessPosition pos, ChessBoardModel board) {
+		Set<ChessPosition> targets = new HashSet<>();
 		// Horizontals
 		PieceUtils.addPositionsUntilHit(1, 0, pos, targets, board);
 		PieceUtils.addPositionsUntilHit(-1, 0, pos, targets, board);
