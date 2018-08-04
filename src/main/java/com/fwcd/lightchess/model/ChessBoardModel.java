@@ -3,7 +3,13 @@ package com.fwcd.lightchess.model;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import com.fwcd.lightchess.model.piece.BishopModel;
 import com.fwcd.lightchess.model.piece.ChessPieceModel;
+import com.fwcd.lightchess.model.piece.KingModel;
+import com.fwcd.lightchess.model.piece.KnightModel;
+import com.fwcd.lightchess.model.piece.PawnModel;
+import com.fwcd.lightchess.model.piece.QueenModel;
+import com.fwcd.lightchess.model.piece.RookModel;
 import com.fwcd.lightchess.utils.ChessConstants;
 import com.fwcd.lightchess.utils.Streams;
 
@@ -14,8 +20,25 @@ public class ChessBoardModel {
 		fields = new ChessFieldModel[ChessConstants.RANKS][ChessConstants.FILES];
 	}
 	
-	public static ChessBoardModel newGame() {
-		
+	public static ChessBoardModel withInitialSetup() {
+		ChessBoardModel board = new ChessBoardModel();
+		for (PlayerColor color : PlayerColor.values()) {
+			int pawnsY = (color == PlayerColor.BLACK)  ? 1 : 6;
+			int piecesY = (color == PlayerColor.BLACK) ? 0 : 7;
+			
+			for (int x=0; x<ChessConstants.FILES; x++) {
+				board.placeAt(x, pawnsY, new PawnModel(color));
+			}
+			board.placeAt(0, piecesY, new RookModel(color));
+			board.placeAt(1, piecesY, new KnightModel(color));
+			board.placeAt(2, piecesY, new BishopModel(color));
+			board.placeAt(3, piecesY, new QueenModel(color));
+			board.placeAt(4, piecesY, new KingModel(color));
+			board.placeAt(5, piecesY, new BishopModel(color));
+			board.placeAt(6, piecesY, new KnightModel(color));
+			board.placeAt(7, piecesY, new RookModel(color));
+		}
+		return board;
 	}
 	
 	public ChessFieldModel fieldAt(ChessPosition position) {
@@ -24,6 +47,14 @@ public class ChessBoardModel {
 	
 	public Optional<ChessPieceModel> pieceAt(ChessPosition position) {
 		return fieldAt(position).getPiece();
+	}
+	
+	public void placeAt(ChessPosition position, ChessPieceModel piece) {
+		fieldAt(position).setPiece(piece);
+	}
+	
+	public void placeAt(int x, int y, ChessPieceModel piece) {
+		placeAt(x, y, piece);
 	}
 	
 	public Stream<ChessFieldModel> fields() {

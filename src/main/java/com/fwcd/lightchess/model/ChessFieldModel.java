@@ -1,33 +1,39 @@
 package com.fwcd.lightchess.model;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.fwcd.lightchess.model.piece.ChessPieceModel;
+import com.fwcd.lightchess.utils.Observable;
 
 public class ChessFieldModel {
 	private final ChessPosition position;
-	private Optional<ChessPieceModel> piece = Optional.empty();
+	private Observable<Optional<ChessPieceModel>> piece = new Observable<>(Optional.empty());
 	
 	public ChessFieldModel(ChessPosition position) {
 		this.position = position;
 	}
 	
-	public boolean hasPiece() { return piece.isPresent(); }
+	public boolean hasPiece() { return piece.get().isPresent(); }
 	
 	public boolean hasPieceOfType(Class<? extends ChessPieceModel> pieceType) {
-		return piece.map(pieceType::isInstance).orElse(false);
+		return piece.get().map(pieceType::isInstance).orElse(false);
 	}
 	
-	public void setPiece(Optional<ChessPieceModel> piece) { this.piece = piece; }
+	public void observePiece(Consumer<Optional<ChessPieceModel>> observer) {
+		piece.listen(observer);
+	}
 	
-	public void setPiece(ChessPieceModel piece) { this.piece = Optional.of(piece); }
+	public void setPiece(Optional<ChessPieceModel> piece) { this.piece.set(piece); }
 	
-	public Optional<ChessPieceModel> getPiece() { return piece; }
+	public void setPiece(ChessPieceModel piece) { this.piece.set(Optional.of(piece)); }
+	
+	public Optional<ChessPieceModel> getPiece() { return piece.get(); }
 	
 	@SuppressWarnings("unchecked")
 	public <T> Optional<T> getPieceAs(Class<? extends ChessPieceModel> pieceType) {
 		if (hasPieceOfType(pieceType)) {
-			return Optional.of((T) piece.orElse(null));
+			return Optional.of((T) piece.get().orElse(null));
 		} else return Optional.empty();
 	}
 }
