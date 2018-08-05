@@ -19,6 +19,7 @@ public class ChessFieldView implements Rendereable {
 	private Optional<ChessPieceView> piece = Optional.empty();
 	private Optional<Rectangle2D> bounds = Optional.empty();
 	private ListenerList changeListeners = new ListenerList();
+	private boolean pieceFloats = false;
 	
 	public ChessFieldView(
 		ChessFieldModel model,
@@ -42,6 +43,10 @@ public class ChessFieldView implements Rendereable {
 		piece = pieceModel.map(it -> new ChessPieceView(it, imageLoader));
 	}
 	
+	public void setPieceFloats(boolean pieceFloats) {
+		this.pieceFloats = pieceFloats;
+	}
+	
 	public ChessFieldModel getModel() { return this.model; }
 	
 	public ListenerList getChangeListeners() { return changeListeners; }
@@ -62,8 +67,10 @@ public class ChessFieldView implements Rendereable {
 			(int) bounds.width(),
 			(int) bounds.height()
 		);
-		piece.ifPresent(it -> {
-			it.renderAt(g2d, bounds.getTopLeft(), (int) bounds.width(), (int) bounds.height());
-		});
+		if (!pieceFloats) {
+			piece.ifPresent(it -> {
+				it.renderAt(g2d, bounds.getTopLeft(), (int) bounds.width(), (int) bounds.height());
+			});
+		}
 	}
 }

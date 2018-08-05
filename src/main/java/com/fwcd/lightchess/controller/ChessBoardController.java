@@ -11,6 +11,7 @@ import com.fwcd.fructose.geometry.Vector2D;
 import com.fwcd.fructose.swing.MouseHandler;
 import com.fwcd.lightchess.model.ChessBoardModel;
 import com.fwcd.lightchess.model.ChessFieldModel;
+import com.fwcd.lightchess.model.ChessMove;
 import com.fwcd.lightchess.model.ChessPosition;
 import com.fwcd.lightchess.model.piece.ChessPieceModel;
 import com.fwcd.lightchess.view.ChessBoardView;
@@ -51,9 +52,9 @@ public class ChessBoardController {
 						Rectangle2D bounds = field.getBounds().orElseThrow(IllegalStateException::new);
 						Vector2D offset = bounds.getTopLeft().sub(pos);
 						ChessFieldModel fieldModel = field.getModel();
-						FloatingChessPieceView dragged = new FloatingChessPieceView(piece, fieldModel, pos, offset);
+						FloatingChessPieceView dragged = new FloatingChessPieceView(piece, field, pos, offset);
 						
-						fieldModel.setPiece(Optional.empty());
+						field.setPieceFloats(true);
 						view.setFloating(Optional.of(dragged));
 						onDragStart(dragged);
 					});
@@ -72,17 +73,18 @@ public class ChessBoardController {
 	
 	private void onMouseUp(Vector2D pos) {
 		view.getFloating().ifPresent(dragged -> {
-			Optional<ChessFieldModel> fieldModel = view.toChessPosition(pos).map(model::fieldAt);
+			ChessPosition origin = dragged.getOrigin().getModel().getPosition();
+			Optional<ChessPosition> dest = view.toChessPosition(pos);
 			ChessPieceModel pieceModel = dragged.getPiece().getModel();
+			Optional<ChessMove> move = dest.map(d -> new ChessMove(pieceModel, origin, d));
 			
-			// TODO: Validate moves in the model
-			// (using a FloatingChessPieceView?)
+			dragged.getOrigin().setPieceFloats(false);
 			
-			if (fieldModel.isPresent()) {
-				fieldModel.orElse(null).setPiece(pieceModel);
+			if (move.isPresent()) {
+				model.performMove(move.orElse(null));
 				onDrop(dragged);
 			} else {
-				dragged.getOrigin().setPiece(pieceModel);
+				dragged.getOrigin().getModel().setPiece(pieceModel);
 			}
 			view.repaint();
 		});
@@ -91,7 +93,7 @@ public class ChessBoardController {
 	
 	private void onDragStart(FloatingChessPieceView dragged) {
 		ChessPieceModel pieceModel = dragged.getPiece().getModel();
-		ChessPosition startPos = dragged.getOrigin().getPosition();
+		ChessPosition startPos = dragged.getOrigin().getModel().getPosition();
 		view.setHighlightedFields(pieceModel.getPossibleMoves(startPos, model));
 	}
 	

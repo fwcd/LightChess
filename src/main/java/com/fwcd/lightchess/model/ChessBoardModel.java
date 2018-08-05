@@ -46,6 +46,17 @@ public class ChessBoardModel {
 		return board;
 	}
 	
+	public boolean performMove(ChessMove move) {
+		boolean valid = move.getPiece()
+			.getPossibleMoves(move.getOrigin(), this)
+			.contains(move.getDest());
+		if (valid) {
+			fieldAt(move.getOrigin()).setPiece(Optional.empty());
+			fieldAt(move.getDest()).setPiece(move.getPiece());;
+		}
+		return valid;
+	}
+	
 	public ChessFieldModel fieldAt(ChessPosition position) {
 		return fields[position.getY()][position.getX()];
 	}
