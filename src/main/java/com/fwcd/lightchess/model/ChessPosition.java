@@ -51,12 +51,16 @@ public class ChessPosition {
 		return plus(-dx, -dy);
 	}
 	
+	/** Equivalent to minusY */
 	public Optional<ChessPosition> up(int delta) { return plus(0, -delta); }
 	
+	/** Equivalent to plusX */
 	public Optional<ChessPosition> right(int delta) { return plus(delta, 0); }
 	
+	/** Equivalent to plusY */
 	public Optional<ChessPosition> down(int delta) { return plus(0, delta); }
 	
+	/** Equivalent to minusX */
 	public Optional<ChessPosition> left(int delta) { return plus(-delta, 0); }
 	
 	public int getX() { return x; }
@@ -82,6 +86,7 @@ public class ChessPosition {
 	
 	@Override
 	public boolean equals(Object obj) {
+		if (obj == null) return false;
 		return (x == ((ChessPosition) obj).x) && (y == ((ChessPosition) obj).y);
 	}
 	

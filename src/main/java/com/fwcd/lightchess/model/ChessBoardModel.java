@@ -46,17 +46,14 @@ public class ChessBoardModel {
 		return board;
 	}
 	
-	public boolean performMove(ChessMove move) {
+	public void performMove(ChessMove move) {
 		ChessPieceModel piece = move.getPiece();
-		boolean valid = piece
-			.getPossibleMoves(move.getOrigin(), this)
-			.anyMatch(it -> it.equals(move));
-		if (valid) {
-			fieldAt(move.getOrigin()).setPiece(Optional.empty());
-			fieldAt(move.getDestination()).setPiece(piece);
-			piece.onMove();
-		}
-		return valid;
+		fieldAt(move.getOrigin()).setPiece(Optional.empty());
+		fieldAt(move.getDestination()).setPiece(piece);
+		move.getEnPassantCapturePos().ifPresent(capturePos -> {
+			fieldAt(capturePos).setPiece(Optional.empty());
+		});
+		piece.onMove();
 	}
 	
 	public ChessFieldModel fieldAt(ChessPosition position) {

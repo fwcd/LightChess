@@ -15,5 +15,7 @@ public interface ChessPieceModel {
 	
 	PlayerColor getColor();
 	
+	default boolean canBeCapturedThroughEnPassant() { return false; }
+	
 	default void onMove() {}
 }
