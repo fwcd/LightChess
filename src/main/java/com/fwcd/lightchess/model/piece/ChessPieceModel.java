@@ -9,13 +9,31 @@ import com.fwcd.lightchess.model.PlayerColor;
 
 /** A chess piece */
 public interface ChessPieceModel {
-	Stream<ChessMove> getPossibleMoves(ChessPosition origin, ChessBoardModel board);
+	Stream<ChessMove> getPossibleMoves(ChessBoardModel board);
 	
 	void accept(ChessPieceVisitor visitor);
 	
 	PlayerColor getColor();
 	
-	default boolean canBeCapturedThroughEnPassant() { return false; }
+	ChessPieceType getType();
 	
-	default void onMove() {}
+	void moveTo(ChessPosition position);
+	
+	ChessPosition getPosition();
+	
+	default boolean threatens(ChessPieceModel piece, ChessBoardModel board) {
+		return getPossibleMoves(board)
+			.map(ChessMove::getDestination)
+			.filter(dest -> dest.equals(piece.getPosition()))
+			.findAny()
+			.isPresent();
+	}
+	
+	default boolean canBeCapturedThroughEnPassant() {
+		return false;
+	}
+	
+	default boolean canMove(ChessBoardModel board) {
+		return getPossibleMoves(board).findAny().isPresent();
+	}
 }

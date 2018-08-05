@@ -8,15 +8,14 @@ import com.fwcd.lightchess.model.ChessPosition;
 import com.fwcd.lightchess.model.PlayerColor;
 import com.fwcd.lightchess.utils.Streams;
 
-public class KnightModel implements ChessPieceModel {
-	private final PlayerColor color;
-	
-	public KnightModel(PlayerColor color) {
-		this.color = color;
+public class KnightModel extends AbstractPieceModel {
+	public KnightModel(PlayerColor color, ChessPosition position) {
+		super(color, position);
 	}
 	
 	@Override
-	public Stream<ChessMove> getPossibleMoves(ChessPosition origin, ChessBoardModel board) {
+	public Stream<ChessMove> getPossibleMoves(ChessBoardModel board) {
+		ChessPosition origin = getPosition();
 		Stream<ChessPosition> positions = Streams.filterPresent(Stream.of(
 			// Top-left
 			origin.plus(-2, -1),
@@ -32,16 +31,16 @@ public class KnightModel implements ChessPieceModel {
 			origin.plus(1, 2)
 		));
 		return positions
-			.filter(it -> !board.fieldAt(it).hasPieceOfColor(color))
+			.filter(it -> !board.fieldAt(it).hasPieceOfColor(getColor()))
 			.map(it -> new ChessMove(this, origin, it))
 			.distinct();
 	}
 	
 	@Override
-	public PlayerColor getColor() { return color; }
-	
-	@Override
 	public void accept(ChessPieceVisitor visitor) {
 		visitor.visitKnight(this);
 	}
+	
+	@Override
+	public ChessPieceType getType() { return ChessPieceType.KNIGHT; }
 }

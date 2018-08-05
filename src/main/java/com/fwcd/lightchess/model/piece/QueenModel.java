@@ -7,16 +7,15 @@ import com.fwcd.lightchess.model.ChessMove;
 import com.fwcd.lightchess.model.ChessPosition;
 import com.fwcd.lightchess.model.PlayerColor;
 
-public class QueenModel implements ChessPieceModel {
-	private final PlayerColor color;
-	
-	public QueenModel(PlayerColor color) {
-		this.color = color;
+public class QueenModel extends AbstractPieceModel {
+	public QueenModel(PlayerColor color, ChessPosition position) {
+		super(color, position);
 	}
 	
 	@Override
-	public Stream<ChessMove> getPossibleMoves(ChessPosition origin, ChessBoardModel board) {
+	public Stream<ChessMove> getPossibleMoves(ChessBoardModel board) {
 		Stream.Builder<ChessMove> moves = Stream.builder();
+		ChessPosition origin = getPosition();
 		// Diagonals
 		PieceUtils.addMovesUntilHit(this, 1, 1, origin, moves, board);
 		PieceUtils.addMovesUntilHit(this, -1, 1, origin, moves, board);
@@ -32,10 +31,10 @@ public class QueenModel implements ChessPieceModel {
 	}
 	
 	@Override
-	public PlayerColor getColor() { return color; }
-	
-	@Override
 	public void accept(ChessPieceVisitor visitor) {
 		visitor.visitQueen(this);
 	}
+	
+	@Override
+	public ChessPieceType getType() { return ChessPieceType.QUEEN; }
 }

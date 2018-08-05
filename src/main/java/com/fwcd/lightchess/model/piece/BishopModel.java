@@ -7,16 +7,15 @@ import com.fwcd.lightchess.model.ChessMove;
 import com.fwcd.lightchess.model.ChessPosition;
 import com.fwcd.lightchess.model.PlayerColor;
 
-public class BishopModel implements ChessPieceModel {
-	private final PlayerColor color;
-	
-	public BishopModel(PlayerColor color) {
-		this.color = color;
+public class BishopModel extends AbstractPieceModel {
+	public BishopModel(PlayerColor color, ChessPosition position) {
+		super(color, position);
 	}
 	
 	@Override
-	public Stream<ChessMove> getPossibleMoves(ChessPosition origin, ChessBoardModel board) {
+	public Stream<ChessMove> getPossibleMoves(ChessBoardModel board) {
 		Stream.Builder<ChessMove> moves = Stream.builder();
+		ChessPosition origin = getPosition();
 		
 		// Diagonals
 		PieceUtils.addMovesUntilHit(this, 1, 1, origin, moves, board);
@@ -28,10 +27,10 @@ public class BishopModel implements ChessPieceModel {
 	}
 	
 	@Override
-	public PlayerColor getColor() { return color; }
-	
-	@Override
 	public void accept(ChessPieceVisitor visitor) {
 		visitor.visitBishop(this);
 	}
+	
+	@Override
+	public ChessPieceType getType() { return ChessPieceType.BISHOP; }
 }

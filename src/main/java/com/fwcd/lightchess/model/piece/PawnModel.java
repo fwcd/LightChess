@@ -11,18 +11,18 @@ import com.fwcd.lightchess.model.ChessPosition;
 import com.fwcd.lightchess.model.PlayerColor;
 import com.fwcd.lightchess.utils.Streams;
 
-public class PawnModel implements ChessPieceModel {
-	private final PlayerColor color;
+public class PawnModel extends AbstractPieceModel {
 	private int moves = 0;
 	
-	public PawnModel(PlayerColor color) {
-		this.color = color;
+	public PawnModel(PlayerColor color, ChessPosition position) {
+		super(color, position);
 	}
 	
 	@Override
-	public Stream<ChessMove> getPossibleMoves(ChessPosition origin, ChessBoardModel board) {
+	public Stream<ChessMove> getPossibleMoves(ChessBoardModel board) {
 		// TODO: Promotion
 		Stream.Builder<ChessMove> moves = Stream.builder();
+		ChessPosition origin = getPosition();
 		
 		stepsFrom(origin, board)
 			.filter(it -> !board.fieldAt(it).hasPiece())
@@ -30,7 +30,7 @@ public class PawnModel implements ChessPieceModel {
 			.forEach(moves::add);
 		diagonalStepsFrom(origin)
 			.map(it -> {
-				if (board.fieldAt(it).hasPieceOfColor(color.opponent())) {
+				if (board.fieldAt(it).hasPieceOfColor(getColor().opponent())) {
 					return Optional.of(new ChessMove(this, origin, it));
 				} else if (isEnPassantPossible(origin, it, board)) {
 					return Optional.of(new ChessMove(this, origin, it, getEnPassantCapturePos(it)));
@@ -48,7 +48,7 @@ public class PawnModel implements ChessPieceModel {
 	 * pawn could capture an opposing pawn through "en passant"
 	 */
 	private int getEnPassantY() {
-		switch (color) {
+		switch (getColor()) {
 			case WHITE: return 3;
 			case BLACK: return 4;
 			default: throw new IllegalStateException("Invalid pawn color");
@@ -56,7 +56,7 @@ public class PawnModel implements ChessPieceModel {
 	}
 	
 	private int getStepY() {
-		switch (color) {
+		switch (getColor()) {
 			case WHITE: return -1;
 			case BLACK: return 1;
 			default: throw new IllegalStateException("Invalid pawn color");
@@ -72,7 +72,7 @@ public class PawnModel implements ChessPieceModel {
 		return origin.getY() == getEnPassantY()
 			&& capturedPos
 				.flatMap(it -> board.pieceAt(it))
-				.filter(it -> it.canBeCapturedThroughEnPassant() && it.getColor().equals(color.opponent()))
+				.filter(it -> it.canBeCapturedThroughEnPassant() && it.getColor().equals(getColor().opponent()))
 				.isPresent();
 	}
 	
@@ -98,9 +98,6 @@ public class PawnModel implements ChessPieceModel {
 	}
 	
 	@Override
-	public PlayerColor getColor() { return color; }
-	
-	@Override
 	public void accept(ChessPieceVisitor visitor) {
 		visitor.visitPawn(this);
 	}
@@ -111,7 +108,10 @@ public class PawnModel implements ChessPieceModel {
 	}
 	
 	@Override
-	public void onMove() {
+	protected void onMove() {
 		moves++;
 	}
+	
+	@Override
+	public ChessPieceType getType() { return ChessPieceType.PAWN; }
 }

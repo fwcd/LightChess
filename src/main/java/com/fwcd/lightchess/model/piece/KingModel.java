@@ -7,22 +7,21 @@ import com.fwcd.lightchess.model.ChessMove;
 import com.fwcd.lightchess.model.ChessPosition;
 import com.fwcd.lightchess.model.PlayerColor;
 
-public class KingModel implements ChessPieceModel {
-	private final PlayerColor color;
-	
-	public KingModel(PlayerColor color) {
-		this.color = color;
+public class KingModel extends AbstractPieceModel {
+	public KingModel(PlayerColor color, ChessPosition position) {
+		super(color, position);
 	}
 	
 	@Override
-	public Stream<ChessMove> getPossibleMoves(ChessPosition origin, ChessBoardModel board) {
+	public Stream<ChessMove> getPossibleMoves(ChessBoardModel board) {
 		// TODO: Castling
 		Stream.Builder<ChessMove> moves = Stream.builder();
+		ChessPosition origin = getPosition();
 		
 		for (int dy=-1; dy<=1; dy++) {
 			for (int dx=-1; dx<=1; dx++) {
 				origin.plus(dx, dy)
-					.filter(it -> !board.fieldAt(it).hasPieceOfColor(color))
+					.filter(it -> !board.fieldAt(it).hasPieceOfColor(getColor()))
 					.map(it -> new ChessMove(this, origin, it))
 					.ifPresent(moves::add);
 			}
@@ -31,11 +30,23 @@ public class KingModel implements ChessPieceModel {
 		return moves.build().distinct();
 	}
 	
-	@Override
-	public PlayerColor getColor() { return color; }
+	public boolean isChecked(ChessBoardModel board) {
+		return board.piecesOfColor(getColor().opponent())
+			.filter(it -> it.threatens(this, board))
+			.findAny()
+			.isPresent();
+			
+	}
+	
+	public boolean isCheckmate(ChessBoardModel board) {
+		return isChecked(board) && !canMove(board);
+	}
 	
 	@Override
 	public void accept(ChessPieceVisitor visitor) {
 		visitor.visitKing(this);
 	}
+	
+	@Override
+	public ChessPieceType getType() { return ChessPieceType.KING; }
 }

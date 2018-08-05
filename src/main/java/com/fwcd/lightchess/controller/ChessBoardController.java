@@ -73,12 +73,11 @@ public class ChessBoardController {
 	
 	private void onMouseUp(Vector2D pos) {
 		view.getFloating().ifPresent(dragged -> {
-			ChessPosition origin = dragged.getOrigin().getModel().getPosition();
 			Optional<ChessPosition> destination = view.toChessPosition(pos);
 			ChessPieceModel piece = dragged.getPiece().getModel();
-			Optional<ChessMove> move = piece.getPossibleMoves(origin, model)
-					.filter(it -> destination.filter(dest -> dest.equals(it.getDestination())).isPresent())
-					.findAny();
+			Optional<ChessMove> move = piece.getPossibleMoves(model)
+				.filter(it -> destination.filter(dest -> dest.equals(it.getDestination())).isPresent())
+				.findAny();
 			
 			dragged.getOrigin().setPieceFloats(false);
 			
@@ -95,8 +94,9 @@ public class ChessBoardController {
 	
 	private void onDragStart(FloatingChessPieceView dragged) {
 		ChessPieceModel pieceModel = dragged.getPiece().getModel();
-		ChessPosition startPos = dragged.getOrigin().getModel().getPosition();
-		Set<ChessPosition> highlightedFields = pieceModel.getPossibleMoves(startPos, model).map(it -> it.getDestination()).collect(Collectors.toSet());
+		Set<ChessPosition> highlightedFields = pieceModel.getPossibleMoves(model)
+			.map(it -> it.getDestination())
+			.collect(Collectors.toSet());
 		view.setHighlightedFields(highlightedFields);
 	}
 	

@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 
 import com.fwcd.fructose.Observable;
 import com.fwcd.lightchess.model.piece.ChessPieceModel;
+import com.fwcd.lightchess.model.piece.ChessPieceType;
 
 public class ChessFieldModel {
 	private final ChessPosition position;
@@ -20,8 +21,8 @@ public class ChessFieldModel {
 		return piece.get().filter(it -> it.getColor() == color).isPresent();
 	}
 	
-	public boolean hasPieceOfType(Class<? extends ChessPieceModel> pieceType) {
-		return piece.get().filter(pieceType::isInstance).isPresent();
+	public boolean hasPieceOfType(ChessPieceType pieceType) {
+		return piece.get().filter(it -> it.getType().equals(pieceType)).isPresent();
 	}
 	
 	public void observePiece(Consumer<Optional<ChessPieceModel>> observer) {
@@ -36,11 +37,4 @@ public class ChessFieldModel {
 	public void setPiece(ChessPieceModel piece) { this.piece.set(Optional.of(piece)); }
 	
 	public Optional<ChessPieceModel> getPiece() { return piece.get(); }
-	
-	@SuppressWarnings("unchecked")
-	public <T> Optional<T> getPieceAs(Class<? extends ChessPieceModel> pieceType) {
-		if (hasPieceOfType(pieceType)) {
-			return Optional.of((T) piece.get().orElse(null));
-		} else return Optional.empty();
-	}
 }
