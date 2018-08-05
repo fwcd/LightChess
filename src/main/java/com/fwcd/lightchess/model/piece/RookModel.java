@@ -18,11 +18,11 @@ public class RookModel implements ChessPieceModel {
 	public Set<ChessPosition> getPossibleMoves(ChessPosition pos, ChessBoardModel board) {
 		Set<ChessPosition> targets = new HashSet<>();
 		// Horizontals
-		PieceUtils.addPositionsUntilHit(1, 0, pos, targets, board);
-		PieceUtils.addPositionsUntilHit(-1, 0, pos, targets, board);
+		PieceUtils.addPositionsUntilHit(1, 0, pos, targets, board, color);
+		PieceUtils.addPositionsUntilHit(-1, 0, pos, targets, board, color);
 		// Verticals
-		PieceUtils.addPositionsUntilHit(0, 1, pos, targets, board);
-		PieceUtils.addPositionsUntilHit(0, -1, pos, targets, board);
+		PieceUtils.addPositionsUntilHit(0, 1, pos, targets, board, color);
+		PieceUtils.addPositionsUntilHit(0, -1, pos, targets, board, color);
 		return targets;
 	}
 	

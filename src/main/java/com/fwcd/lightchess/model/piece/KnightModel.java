@@ -31,7 +31,7 @@ public class KnightModel implements ChessPieceModel {
 			// Bottom-right
 			pos.plus(2, 1),
 			pos.plus(1, 2)
-		)).collect(Collectors.toSet());
+		)).filter(it -> !board.fieldAt(it).hasPieceOfColor(color)).collect(Collectors.toSet());
 	}
 	
 	@Override

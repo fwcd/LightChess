@@ -28,7 +28,7 @@ public class PawnModel implements ChessPieceModel {
 			}
 		});
 		diagonalStepsFrom(pos)
-			.filter(it -> board.fieldAt(it).hasPiece())
+			.filter(it -> board.fieldAt(it).hasPieceOfColor(color.opponent()))
 			.forEach(targets::add);
 		
 		return targets;

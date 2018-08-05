@@ -18,10 +18,10 @@ public class BishopModel implements ChessPieceModel {
 	public Set<ChessPosition> getPossibleMoves(ChessPosition pos, ChessBoardModel board) {
 		Set<ChessPosition> targets = new HashSet<>();
 		// Diagonals
-		PieceUtils.addPositionsUntilHit(1, 1, pos, targets, board);
-		PieceUtils.addPositionsUntilHit(-1, 1, pos, targets, board);
-		PieceUtils.addPositionsUntilHit(-1, -1, pos, targets, board);
-		PieceUtils.addPositionsUntilHit(1, -1, pos, targets, board);
+		PieceUtils.addPositionsUntilHit(1, 1, pos, targets, board, color);
+		PieceUtils.addPositionsUntilHit(-1, 1, pos, targets, board, color);
+		PieceUtils.addPositionsUntilHit(-1, -1, pos, targets, board, color);
+		PieceUtils.addPositionsUntilHit(1, -1, pos, targets, board, color);
 		return targets;
 	}
 	

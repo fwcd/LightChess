@@ -16,8 +16,12 @@ public class ChessFieldModel {
 	
 	public boolean hasPiece() { return piece.get().isPresent(); }
 	
+	public boolean hasPieceOfColor(PlayerColor color) {
+		return piece.get().filter(it -> it.getColor() == color).isPresent();
+	}
+	
 	public boolean hasPieceOfType(Class<? extends ChessPieceModel> pieceType) {
-		return piece.get().map(pieceType::isInstance).orElse(false);
+		return piece.get().filter(pieceType::isInstance).isPresent();
 	}
 	
 	public void observePiece(Consumer<Optional<ChessPieceModel>> observer) {

@@ -21,7 +21,9 @@ public class KingModel implements ChessPieceModel {
 		
 		for (int dy=-1; dy<=1; dy++) {
 			for (int dx=-1; dx<=1; dx++) {
-				pos.plus(dx, dy).ifPresent(targets::add);
+				pos.plus(dx, dy)
+					.filter(it -> !board.fieldAt(it).hasPieceOfColor(color))
+					.ifPresent(targets::add);
 			}
 		}
 		
