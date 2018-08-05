@@ -1,9 +1,9 @@
 package com.fwcd.lightchess.model.piece;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.stream.Stream;
 
 import com.fwcd.lightchess.model.ChessBoardModel;
+import com.fwcd.lightchess.model.ChessMove;
 import com.fwcd.lightchess.model.ChessPosition;
 import com.fwcd.lightchess.model.PlayerColor;
 
@@ -15,19 +15,20 @@ public class KingModel implements ChessPieceModel {
 	}
 	
 	@Override
-	public Set<ChessPosition> getPossibleMoves(ChessPosition pos, ChessBoardModel board) {
+	public Stream<ChessMove> getPossibleMoves(ChessPosition origin, ChessBoardModel board) {
 		// TODO: Castling
-		Set<ChessPosition> targets = new HashSet<>();
+		Stream.Builder<ChessMove> moves = Stream.builder();
 		
 		for (int dy=-1; dy<=1; dy++) {
 			for (int dx=-1; dx<=1; dx++) {
-				pos.plus(dx, dy)
+				origin.plus(dx, dy)
 					.filter(it -> !board.fieldAt(it).hasPieceOfColor(color))
-					.ifPresent(targets::add);
+					.map(it -> new ChessMove(this, origin, it))
+					.ifPresent(moves::add);
 			}
 		}
 		
-		return targets;
+		return moves.build().distinct();
 	}
 	
 	@Override

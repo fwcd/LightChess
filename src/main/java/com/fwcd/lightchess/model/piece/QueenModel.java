@@ -1,9 +1,9 @@
 package com.fwcd.lightchess.model.piece;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.stream.Stream;
 
 import com.fwcd.lightchess.model.ChessBoardModel;
+import com.fwcd.lightchess.model.ChessMove;
 import com.fwcd.lightchess.model.ChessPosition;
 import com.fwcd.lightchess.model.PlayerColor;
 
@@ -15,20 +15,20 @@ public class QueenModel implements ChessPieceModel {
 	}
 	
 	@Override
-	public Set<ChessPosition> getPossibleMoves(ChessPosition pos, ChessBoardModel board) {
-		Set<ChessPosition> targets = new HashSet<>();
+	public Stream<ChessMove> getPossibleMoves(ChessPosition origin, ChessBoardModel board) {
+		Stream.Builder<ChessMove> moves = Stream.builder();
 		// Diagonals
-		PieceUtils.addPositionsUntilHit(1, 1, pos, targets, board, color);
-		PieceUtils.addPositionsUntilHit(-1, 1, pos, targets, board, color);
-		PieceUtils.addPositionsUntilHit(-1, -1, pos, targets, board, color);
-		PieceUtils.addPositionsUntilHit(1, -1, pos, targets, board, color);
+		PieceUtils.addMovesUntilHit(this, 1, 1, origin, moves, board);
+		PieceUtils.addMovesUntilHit(this, -1, 1, origin, moves, board);
+		PieceUtils.addMovesUntilHit(this, -1, -1, origin, moves, board);
+		PieceUtils.addMovesUntilHit(this, 1, -1, origin, moves, board);
 		// Horizontals
-		PieceUtils.addPositionsUntilHit(1, 0, pos, targets, board, color);
-		PieceUtils.addPositionsUntilHit(-1, 0, pos, targets, board, color);
+		PieceUtils.addMovesUntilHit(this, 1, 0, origin, moves, board);
+		PieceUtils.addMovesUntilHit(this, -1, 0, origin, moves, board);
 		// Verticals
-		PieceUtils.addPositionsUntilHit(0, 1, pos, targets, board, color);
-		PieceUtils.addPositionsUntilHit(0, -1, pos, targets, board, color);
-		return targets;
+		PieceUtils.addMovesUntilHit(this, 0, 1, origin, moves, board);
+		PieceUtils.addMovesUntilHit(this, 0, -1, origin, moves, board);
+		return moves.build().distinct();
 	}
 	
 	@Override

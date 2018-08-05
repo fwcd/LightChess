@@ -1,10 +1,9 @@
 package com.fwcd.lightchess.model.piece;
 
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.fwcd.lightchess.model.ChessBoardModel;
+import com.fwcd.lightchess.model.ChessMove;
 import com.fwcd.lightchess.model.ChessPosition;
 import com.fwcd.lightchess.model.PlayerColor;
 import com.fwcd.lightchess.utils.Streams;
@@ -17,21 +16,25 @@ public class KnightModel implements ChessPieceModel {
 	}
 	
 	@Override
-	public Set<ChessPosition> getPossibleMoves(ChessPosition pos, ChessBoardModel board) {
-		return Streams.filterPresent(Stream.of(
+	public Stream<ChessMove> getPossibleMoves(ChessPosition origin, ChessBoardModel board) {
+		Stream<ChessPosition> positions = Streams.filterPresent(Stream.of(
 			// Top-left
-			pos.plus(-2, -1),
-			pos.plus(-1, -2),
+			origin.plus(-2, -1),
+			origin.plus(-1, -2),
 			// Top-right
-			pos.plus(2, -1),
-			pos.plus(1, -2),
+			origin.plus(2, -1),
+			origin.plus(1, -2),
 			// Bottom-left
-			pos.plus(-2, 1),
-			pos.plus(-1, 2),
+			origin.plus(-2, 1),
+			origin.plus(-1, 2),
 			// Bottom-right
-			pos.plus(2, 1),
-			pos.plus(1, 2)
-		)).filter(it -> !board.fieldAt(it).hasPieceOfColor(color)).collect(Collectors.toSet());
+			origin.plus(2, 1),
+			origin.plus(1, 2)
+		));
+		return positions
+			.filter(it -> !board.fieldAt(it).hasPieceOfColor(color))
+			.map(it -> new ChessMove(this, origin, it))
+			.distinct();
 	}
 	
 	@Override
