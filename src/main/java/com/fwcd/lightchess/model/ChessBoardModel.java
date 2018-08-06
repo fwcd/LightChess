@@ -71,7 +71,7 @@ public class ChessBoardModel implements Copyable<ChessBoardModel> {
 	
 	public Optional<KingModel> getCheckmate() {
 		return kings()
-			.filter(it -> it.isCheckmate(this))
+			.filter(it -> it.isChecked(this) && !canMove(it.getColor()))
 			.findAny();
 	}
 	
@@ -84,22 +84,28 @@ public class ChessBoardModel implements Copyable<ChessBoardModel> {
 	
 	public ChessBoardModel spawnChild(ChessMove move) {
 		ChessBoardModel board = copy();
-		board.performMove(move);
+		board.performMoveSilently(move);
 		return board;
 	}
 	
-	public void performMove(ChessMove move) {
-		ChessPieceModel piece = move.getPiece();
+	private void performMoveSilently(ChessMove move) {
 		ChessPosition origin = move.getOrigin();
 		ChessPosition destination = move.getDestination();
+		ChessFieldModel originField = fieldAt(origin);
+		ChessFieldModel destinationField = fieldAt(destination);
+		ChessPieceModel piece = originField.getPiece()
+			.orElseThrow(() -> new UnsupportedOperationException("Tried to move non-existent chess piece"));
 		
-		fieldAt(origin).setPiece(Optional.empty());
-		fieldAt(destination).setPiece(piece);
+		originField.setPiece(Optional.empty());
+		destinationField.setPiece(piece);
 		move.getEnPassantCapturePos().ifPresent(capturePos -> {
 			fieldAt(capturePos).setPiece(Optional.empty());
 		});
 		piece.moveTo(destination);
-		
+	}
+	
+	public void performMove(ChessMove move) {
+		performMoveSilently(move);
 		LOG.debug("Committed move - stalemate: {} - check: {} - checkmate: {}", getStalemate(), getCheckedKing(), getCheckmate());
 	}
 	
@@ -145,6 +151,13 @@ public class ChessBoardModel implements Copyable<ChessBoardModel> {
 	
 	public Stream<ChessPieceModel> piecesOfColor(PlayerColor color) {
 		return pieces().filter(it -> it.getColor().equals(color));
+	}
+	
+	public KingModel kingOfColor(PlayerColor color) {
+		return kings()
+			.filter(it -> it.getColor().equals(color))
+			.findAny()
+			.orElseThrow(() -> new IllegalStateException("Each player needs a king"));
 	}
 	
 	public Stream<KingModel> kings() { return piecesOfType(ChessPieceType.KING).map(it -> (KingModel) it); }

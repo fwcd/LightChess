@@ -19,21 +19,21 @@ public class PawnModel extends AbstractPieceModel {
 	}
 	
 	@Override
-	public Stream<ChessMove> getPossibleMoves(ChessBoardModel board) {
+	protected Stream<ChessMove> getIntendedMoves(ChessBoardModel board) {
 		// TODO: Promotion
 		Stream.Builder<ChessMove> moves = Stream.builder();
 		ChessPosition origin = getPosition();
 		
 		stepsFrom(origin, board)
 			.filter(it -> !board.fieldAt(it).hasPiece())
-			.map(it -> new ChessMove(this, origin, it))
+			.map(it -> new ChessMove(getType(), origin, it))
 			.forEach(moves::add);
 		diagonalStepsFrom(origin)
 			.map(it -> {
 				if (board.fieldAt(it).hasPieceOfColor(getColor().opponent())) {
-					return Optional.of(new ChessMove(this, origin, it));
+					return Optional.of(new ChessMove(getType(), origin, it));
 				} else if (isEnPassantPossible(origin, it, board)) {
-					return Optional.of(new ChessMove(this, origin, it, getEnPassantCapturePos(it)));
+					return Optional.of(new ChessMove(getType(), origin, it, getEnPassantCapturePos(it)));
 				} else return Optional.<ChessMove>empty();
 			})
 			.filter(Optional::isPresent)

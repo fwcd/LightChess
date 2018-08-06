@@ -2,20 +2,20 @@ package com.fwcd.lightchess.model;
 
 import java.util.Optional;
 
-import com.fwcd.lightchess.model.piece.ChessPieceModel;
+import com.fwcd.lightchess.model.piece.ChessPieceType;
 
 public class ChessMove {
-	private final ChessPieceModel piece;
+	private final ChessPieceType pieceType;
 	private final ChessPosition origin;
 	private final ChessPosition destination;
 	private final Optional<ChessPosition> enPassantCapturePos;
 	
-	public ChessMove(ChessPieceModel piece, ChessPosition origin, ChessPosition destination) {
-		this(piece, origin, destination, Optional.empty());
+	public ChessMove(ChessPieceType pieceType, ChessPosition origin, ChessPosition destination) {
+		this(pieceType, origin, destination, Optional.empty());
 	}
 	
-	public ChessMove(ChessPieceModel piece, ChessPosition origin, ChessPosition destination, Optional<ChessPosition> enPassantCapturePos) {
-		this.piece = piece;
+	public ChessMove(ChessPieceType pieceType, ChessPosition origin, ChessPosition destination, Optional<ChessPosition> enPassantCapturePos) {
+		this.pieceType = pieceType;
 		this.origin = origin;
 		this.destination = destination;
 		this.enPassantCapturePos = enPassantCapturePos;
@@ -25,7 +25,7 @@ public class ChessMove {
 	
 	public ChessPosition getOrigin() { return origin; }
 	
-	public ChessPieceModel getPiece() { return piece; }
+	public ChessPieceType getPieceType() { return pieceType; }
 	
 	public Optional<ChessPosition> getEnPassantCapturePos() { return enPassantCapturePos; }
 	
@@ -33,7 +33,7 @@ public class ChessMove {
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
 		ChessMove other = (ChessMove) obj;
-		return piece.equals(other.piece)
+		return pieceType.equals(other.pieceType)
 			&& origin.equals(other.origin)
 			&& destination.equals(other.destination)
 			&& enPassantCapturePos.equals(other.enPassantCapturePos);
@@ -41,7 +41,7 @@ public class ChessMove {
 	
 	@Override
 	public int hashCode() {
-		return piece.hashCode()
+		return pieceType.hashCode()
 			* origin.hashCode()
 			* destination.hashCode()
 			* enPassantCapturePos.hashCode()

@@ -13,7 +13,7 @@ public class KingModel extends AbstractPieceModel {
 	}
 	
 	@Override
-	public Stream<ChessMove> getPossibleMoves(ChessBoardModel board) {
+	protected Stream<ChessMove> getIntendedMoves(ChessBoardModel board) {
 		// TODO: Castling
 		Stream.Builder<ChessMove> moves = Stream.builder();
 		ChessPosition origin = getPosition();
@@ -24,8 +24,7 @@ public class KingModel extends AbstractPieceModel {
 			for (int dx=-1; dx<=1; dx++) {
 				origin.plus(dx, dy)
 					.filter(it -> !board.fieldAt(it).hasPieceOfColor(getColor()))
-					.map(it -> new ChessMove(this, origin, it))
-					.filter(it -> !causesCheck(it, board))
+					.map(it -> new ChessMove(getType(), origin, it))
 					.ifPresent(moves::add);
 			}
 		}
@@ -33,18 +32,9 @@ public class KingModel extends AbstractPieceModel {
 		return moves.build().distinct();
 	}
 	
-	private boolean causesCheck(ChessMove move, ChessBoardModel board) {
-		return board.piecesOfColor(getColor().opponent())
-			.anyMatch(it -> it.threatens(move.getDestination(), board));
-	}
-	
 	public boolean isChecked(ChessBoardModel board) {
 		return board.piecesOfColor(getColor().opponent())
 			.anyMatch(it -> it.threatens(getPosition(), board));
-	}
-	
-	public boolean isCheckmate(ChessBoardModel board) {
-		return isChecked(board) && !canMove(board);
 	}
 	
 	@Override

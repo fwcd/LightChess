@@ -13,7 +13,7 @@ public class QueenModel extends AbstractPieceModel {
 	}
 	
 	@Override
-	public Stream<ChessMove> getPossibleMoves(ChessBoardModel board) {
+	protected Stream<ChessMove> getIntendedMoves(ChessBoardModel board) {
 		Stream.Builder<ChessMove> moves = Stream.builder();
 		ChessPosition origin = getPosition();
 		// Diagonals

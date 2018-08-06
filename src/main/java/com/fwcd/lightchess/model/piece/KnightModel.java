@@ -14,7 +14,7 @@ public class KnightModel extends AbstractPieceModel {
 	}
 	
 	@Override
-	public Stream<ChessMove> getPossibleMoves(ChessBoardModel board) {
+	protected Stream<ChessMove> getIntendedMoves(ChessBoardModel board) {
 		ChessPosition origin = getPosition();
 		Stream<ChessPosition> positions = Streams.filterPresent(Stream.of(
 			// Top-left
@@ -32,7 +32,7 @@ public class KnightModel extends AbstractPieceModel {
 		));
 		return positions
 			.filter(it -> !board.fieldAt(it).hasPieceOfColor(getColor()))
-			.map(it -> new ChessMove(this, origin, it))
+			.map(it -> new ChessMove(getType(), origin, it))
 			.distinct();
 	}
 	

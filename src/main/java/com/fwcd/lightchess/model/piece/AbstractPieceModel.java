@@ -1,6 +1,7 @@
 package com.fwcd.lightchess.model.piece;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.fwcd.lightchess.model.ChessBoardModel;
 import com.fwcd.lightchess.model.ChessMove;
@@ -17,10 +18,24 @@ public abstract class AbstractPieceModel implements ChessPieceModel {
 	}
 	
 	@Override
+	public Stream<ChessMove> getPossibleMoves(ChessBoardModel board) {
+		return getIntendedMoves(board)
+			.filter(it -> !causesCheck(it, board));
+	}
+	
+	private boolean causesCheck(ChessMove move, ChessBoardModel board) {
+		ChessBoardModel boardAfterMove = board.spawnChild(move);
+		ChessPosition kingAfterMove = boardAfterMove.kingOfColor(color).getPosition();
+		return boardAfterMove
+			.piecesOfColor(color.opponent())
+			.anyMatch(it -> it.threatens(kingAfterMove, boardAfterMove));
+	}
+	
+	@Override
 	public boolean threatens(ChessPosition target, ChessBoardModel board) {
 		ChessBoardModel boardWithoutTarget = board.copy();
 		boardWithoutTarget.fieldAt(target).setPiece(Optional.empty());
-		return getPossibleMoves(boardWithoutTarget)
+		return getIntendedMoves(boardWithoutTarget)
 			.map(ChessMove::getDestination)
 			.anyMatch(dest -> dest.equals(target));
 	}
@@ -36,6 +51,12 @@ public abstract class AbstractPieceModel implements ChessPieceModel {
 		this.position = position;
 		onMove();
 	}
+	
+	/**
+	 * Generates all possible moves without considering
+	 * special situations such as a check.
+	 */
+	protected abstract Stream<ChessMove> getIntendedMoves(ChessBoardModel board);
 	
 	protected void onMove() {}
 }

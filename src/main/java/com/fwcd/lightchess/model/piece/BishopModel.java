@@ -13,7 +13,7 @@ public class BishopModel extends AbstractPieceModel {
 	}
 	
 	@Override
-	public Stream<ChessMove> getPossibleMoves(ChessBoardModel board) {
+	protected Stream<ChessMove> getIntendedMoves(ChessBoardModel board) {
 		Stream.Builder<ChessMove> moves = Stream.builder();
 		ChessPosition origin = getPosition();
 		
@@ -23,7 +23,7 @@ public class BishopModel extends AbstractPieceModel {
 		PieceUtils.addMovesUntilHit(this, -1, -1, origin, moves, board);
 		PieceUtils.addMovesUntilHit(this, 1, -1, origin, moves, board);
 		
-		return moves.build().distinct();
+		return moves.build();
 	}
 	
 	@Override
