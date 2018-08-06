@@ -18,6 +18,11 @@ public class PawnModel extends AbstractPieceModel {
 		super(color, position);
 	}
 	
+	private PawnModel(PlayerColor color, ChessPosition position, int moves) {
+		super(color, position);
+		this.moves = moves;
+	}
+	
 	@Override
 	protected Stream<ChessMove> getIntendedMoves(ChessBoardModel board) {
 		// TODO: Promotion
@@ -26,19 +31,19 @@ public class PawnModel extends AbstractPieceModel {
 		
 		stepsFrom(origin, board)
 			.filter(it -> !board.fieldAt(it).hasPiece())
-			.map(it -> new ChessMove(getType(), origin, it))
-			.forEach(moves::add);
+			.map(it -> ChessMove.create(getType(), origin, it))
+			.forEach(moves::accept);
 		diagonalStepsFrom(origin)
 			.map(it -> {
 				if (board.fieldAt(it).hasPieceOfColor(getColor().opponent())) {
-					return Optional.of(new ChessMove(getType(), origin, it));
+					return Optional.of(ChessMove.create(getType(), origin, it));
 				} else if (isEnPassantPossible(origin, it, board)) {
-					return Optional.of(new ChessMove(getType(), origin, it, getEnPassantCapturePos(it)));
+					return Optional.of(ChessMove.createEnPassant(getType(), origin, it, getEnPassantCapturePos(it).orElseThrow(IllegalStateException::new)));
 				} else return Optional.<ChessMove>empty();
 			})
 			.filter(Optional::isPresent)
 			.map(it -> it.orElseThrow(NoSuchElementException::new))
-			.forEach(moves::add);
+			.forEach(moves::accept);
 		
 		return moves.build().distinct();
 	}
@@ -122,5 +127,5 @@ public class PawnModel extends AbstractPieceModel {
 	public ChessPieceType getType() { return ChessPieceType.PAWN; }
 	
 	@Override
-	public ChessPieceModel copy() { return new PawnModel(getColor(), getPosition()); }
+	public ChessPieceModel copy() { return new PawnModel(getColor(), getPosition(), moves); }
 }

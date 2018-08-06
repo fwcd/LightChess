@@ -23,11 +23,11 @@ final class PieceUtils {
 			ChessFieldModel field = board.fieldAt(current);
 			if (field.hasPiece()) {
 				if (field.hasPieceOfColor(piece.getColor().opponent())) {
-					moves.add(new ChessMove(piece.getType(), origin, current));
+					moves.accept(ChessMove.create(piece.getType(), origin, current));
 				}
 				break;
 			} else {
-				moves.add(new ChessMove(piece.getType(), origin, current));
+				moves.accept(ChessMove.create(piece.getType(), origin, current));
 			}
 			current = current.plus(dx, dy).orElse(null);
 		}

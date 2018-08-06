@@ -79,6 +79,22 @@ public class ChessPosition {
 		return Math.abs(position.y - y);
 	}
 	
+	public boolean isTopLeftCorner() {
+		return (x == 0) && (y == 0);
+	}
+	
+	public boolean isBottomLeftCorner() {
+		return (x == 0) && (y == (ChessConstants.RANKS - 1));
+	}
+	
+	public boolean isTopRightCorner() {
+		return (x == (ChessConstants.FILES - 1)) && (y == 0);
+	}
+	
+	public boolean isBottomRightCorner() {
+		return (x == (ChessConstants.FILES - 1)) && (y == (ChessConstants.RANKS - 1));
+	}
+	
 	private static boolean isValidX(int x) {
 		return (x >= 0) && (x < ChessConstants.FILES);
 	}

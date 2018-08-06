@@ -8,8 +8,15 @@ import com.fwcd.lightchess.model.ChessPosition;
 import com.fwcd.lightchess.model.PlayerColor;
 
 public class RookModel extends AbstractPieceModel {
+	private boolean moved = false;
+	
 	public RookModel(PlayerColor color, ChessPosition position) {
 		super(color, position);
+	}
+	
+	private RookModel(PlayerColor color, ChessPosition position, boolean moved) {
+		super(color, position);
+		this.moved = moved;
 	}
 	
 	@Override
@@ -25,6 +32,18 @@ public class RookModel extends AbstractPieceModel {
 		return moves.build().distinct();
 	}
 	
+	public boolean hasMoved() { return moved; }
+	
+	public boolean isInLeftCorner() {
+		ChessPosition pos = getPosition();
+		return pos.isTopLeftCorner() || pos.isBottomLeftCorner();
+	}
+	
+	public boolean isInRightCorner() {
+		ChessPosition pos = getPosition();
+		return pos.isTopRightCorner() || pos.isBottomRightCorner();
+	}
+	
 	@Override
 	public void accept(ChessPieceVisitor visitor) {
 		visitor.visitRook(this);
@@ -34,5 +53,10 @@ public class RookModel extends AbstractPieceModel {
 	public ChessPieceType getType() { return ChessPieceType.ROOK; }
 	
 	@Override
-	public ChessPieceModel copy() { return new RookModel(getColor(), getPosition()); }
+	protected void onMove() {
+		moved = true;
+	}
+	
+	@Override
+	public ChessPieceModel copy() { return new RookModel(getColor(), getPosition(), moved); }
 }

@@ -32,7 +32,7 @@ public class KnightModel extends AbstractPieceModel {
 		));
 		return positions
 			.filter(it -> !board.fieldAt(it).hasPieceOfColor(getColor()))
-			.map(it -> new ChessMove(getType(), origin, it))
+			.map(it -> ChessMove.create(getType(), origin, it))
 			.distinct();
 	}
 	

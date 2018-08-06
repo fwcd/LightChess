@@ -1,6 +1,7 @@
 package com.fwcd.lightchess.model;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
@@ -92,15 +93,24 @@ public class ChessBoardModel implements Copyable<ChessBoardModel> {
 		ChessPosition origin = move.getOrigin();
 		ChessPosition destination = move.getDestination();
 		ChessFieldModel originField = fieldAt(origin);
-		ChessFieldModel destinationField = fieldAt(destination);
+		ChessFieldModel destField = fieldAt(destination);
 		ChessPieceModel piece = originField.getPiece()
 			.orElseThrow(() -> new UnsupportedOperationException("Tried to move non-existent chess piece"));
 		
 		originField.setPiece(Optional.empty());
-		destinationField.setPiece(piece);
-		move.getEnPassantCapturePos().ifPresent(capturePos -> {
-			fieldAt(capturePos).setPiece(Optional.empty());
-		});
+		destField.setPiece(piece);
+		for (ChessPosition otherCapture : move.getOtherCaptures()) {
+			fieldAt(otherCapture).setPiece(Optional.empty());
+		}
+		for (Map.Entry<ChessPosition, ChessPosition> otherRelocation : move.getOtherRelocations().entrySet()) {
+			ChessFieldModel relocationOriginField = fieldAt(otherRelocation.getKey());
+			ChessFieldModel relocationDestField = fieldAt(otherRelocation.getValue());
+			ChessPieceModel relocatedPiece = relocationOriginField.getPiece()
+				.orElseThrow(() -> new UnsupportedOperationException("Tried to relocate non-existent chess piece"));
+			relocationOriginField.setPiece(Optional.empty());
+			relocationDestField.setPiece(relocatedPiece);
+			relocatedPiece.moveTo(relocationDestField.getPosition());
+		}
 		piece.moveTo(destination);
 	}
 	
@@ -135,7 +145,7 @@ public class ChessBoardModel implements Copyable<ChessBoardModel> {
 		Stream.Builder<ChessFieldModel> stream = Stream.builder();
 		for (ChessFieldModel[] rank : fields) {
 			for (ChessFieldModel field : rank) {
-				stream.add(field);
+				stream.accept(field);
 			}
 		}
 		return stream.build();
