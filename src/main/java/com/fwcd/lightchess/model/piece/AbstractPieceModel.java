@@ -1,6 +1,6 @@
 package com.fwcd.lightchess.model.piece;
 
-import java.util.stream.Stream;
+import java.util.Optional;
 
 import com.fwcd.lightchess.model.ChessBoardModel;
 import com.fwcd.lightchess.model.ChessMove;
@@ -17,10 +17,12 @@ public abstract class AbstractPieceModel implements ChessPieceModel {
 	}
 	
 	@Override
-	public boolean threatens(ChessPosition position, ChessBoardModel board) {
-		return getPossibleMoves(board)
+	public boolean threatens(ChessPosition target, ChessBoardModel board) {
+		ChessBoardModel boardWithoutTarget = board.copy();
+		boardWithoutTarget.fieldAt(target).setPiece(Optional.empty());
+		return getPossibleMoves(boardWithoutTarget)
 			.map(ChessMove::getDestination)
-			.anyMatch(dest -> dest.equals(position));
+			.anyMatch(dest -> dest.equals(target));
 	}
 	
 	@Override

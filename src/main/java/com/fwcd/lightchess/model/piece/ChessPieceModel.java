@@ -22,7 +22,7 @@ public interface ChessPieceModel extends Copyable<ChessPieceModel> {
 	
 	ChessPosition getPosition();
 	
-	boolean threatens(ChessPosition position, ChessBoardModel board);
+	boolean threatens(ChessPosition target, ChessBoardModel board);
 	
 	default boolean canBeCapturedThroughEnPassant() {
 		return false;
@@ -30,5 +30,13 @@ public interface ChessPieceModel extends Copyable<ChessPieceModel> {
 	
 	default boolean canMove(ChessBoardModel board) {
 		return getPossibleMoves(board).findAny().isPresent();
+	}
+	
+	/**
+	 * Checks whether type and color of this piece
+	 * matches another.
+	 */
+	default boolean pieceMatches(ChessPieceModel other) {
+		return other.getColor().equals(getColor()) && other.getType().equals(getType());
 	}
 }

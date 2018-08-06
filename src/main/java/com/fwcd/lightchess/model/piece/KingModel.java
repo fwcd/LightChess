@@ -35,12 +35,12 @@ public class KingModel extends AbstractPieceModel {
 	
 	private boolean causesCheck(ChessMove move, ChessBoardModel board) {
 		return board.piecesOfColor(getColor().opponent())
-			.anyMatch(it -> (it.getType() != ChessPieceType.KING) && it.threatens(move.getDestination(), board));
+			.anyMatch(it -> it.threatens(move.getDestination(), board));
 	}
 	
 	public boolean isChecked(ChessBoardModel board) {
 		return board.piecesOfColor(getColor().opponent())
-			.anyMatch(it -> (it.getType() != ChessPieceType.KING) && it.threatens(getPosition(), board));
+			.anyMatch(it -> it.threatens(getPosition(), board));
 	}
 	
 	public boolean isCheckmate(ChessBoardModel board) {
@@ -50,6 +50,12 @@ public class KingModel extends AbstractPieceModel {
 	@Override
 	public void accept(ChessPieceVisitor visitor) {
 		visitor.visitKing(this);
+	}
+	
+	@Override
+	public boolean threatens(ChessPosition target, ChessBoardModel board) {
+		ChessPosition pos = getPosition();
+		return (pos.xDistanceTo(target) <= 1) && (pos.yDistanceTo(target) <= 1);
 	}
 	
 	@Override

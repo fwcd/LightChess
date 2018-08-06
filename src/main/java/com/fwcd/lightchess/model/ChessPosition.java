@@ -71,6 +71,14 @@ public class ChessPosition {
 	
 	public int getRank() { return ChessConstants.RANKS - y; }
 	
+	public int xDistanceTo(ChessPosition position) {
+		return Math.abs(position.x - x);
+	}
+	
+	public int yDistanceTo(ChessPosition position) {
+		return Math.abs(position.y - y);
+	}
+	
 	private static boolean isValidX(int x) {
 		return (x >= 0) && (x < ChessConstants.FILES);
 	}
