@@ -1,4 +1,4 @@
-package com.fwcd.lightchess.view;
+package com.fwcd.lightchess.view.board;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -17,6 +17,7 @@ import com.fwcd.fructose.swing.Viewable;
 import com.fwcd.lightchess.model.ChessBoardModel;
 import com.fwcd.lightchess.model.ChessPosition;
 import com.fwcd.lightchess.utils.ChessConstants;
+import com.fwcd.lightchess.view.ImageLoader;
 
 public class ChessBoardView implements Viewable {
 	private final ChessBoardModel model;

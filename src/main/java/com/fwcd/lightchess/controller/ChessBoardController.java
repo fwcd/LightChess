@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.JComponent;
 
+import com.fwcd.fructose.EventListenerList;
 import com.fwcd.fructose.geometry.Rectangle2D;
 import com.fwcd.fructose.geometry.Vector2D;
 import com.fwcd.fructose.swing.MouseHandler;
@@ -15,28 +16,42 @@ import com.fwcd.lightchess.model.ChessBoardModel;
 import com.fwcd.lightchess.model.ChessMove;
 import com.fwcd.lightchess.model.ChessPosition;
 import com.fwcd.lightchess.model.piece.ChessPieceModel;
-import com.fwcd.lightchess.view.ChessBoardView;
-import com.fwcd.lightchess.view.ChessFieldView;
-import com.fwcd.lightchess.view.FloatingChessPieceView;
+import com.fwcd.lightchess.view.board.ChessBoardView;
+import com.fwcd.lightchess.view.board.ChessFieldView;
+import com.fwcd.lightchess.view.board.FloatingChessPieceView;
 
 public class ChessBoardController {
 	private final ChessBoardModel model;
 	private final ChessBoardView view;
+	private EventListenerList<ChessMove> moveListeners = new EventListenerList<>();
+	private boolean userInteractionsEnabled = false;
 	
-	public ChessBoardController(ChessBoardModel model) {
+	public ChessBoardController(ChessBoardModel model, ChessBoardView view) {
 		this.model = model;
-		view = new ChessBoardView(model);
+		this.view = view;
 		
 		setupViewListeners();
+	}
+	
+	public void setUserInteractionsEnabled(boolean userInteractionsEnabled) {
+		this.userInteractionsEnabled = userInteractionsEnabled;
 	}
 	
 	private void setupViewListeners() {
 		MouseHandler handler = new MouseHandler() {
 			@Override
-			public void mousePressed(MouseEvent e) { onMouseDown(posOf(e)); }
+			public void mousePressed(MouseEvent e) {
+				if (userInteractionsEnabled) {
+					onMouseDown(posOf(e));
+				}
+			}
 			
 			@Override
-			public void mouseDragged(MouseEvent e) { onMouseDrag(posOf(e)); }
+			public void mouseDragged(MouseEvent e) {
+				if (userInteractionsEnabled) {
+					onMouseDrag(posOf(e));
+				}
+			}
 			
 			@Override
 			public void mouseReleased(MouseEvent e) { onMouseUp(posOf(e)); }
@@ -82,7 +97,7 @@ public class ChessBoardController {
 			dragged.getOrigin().setPieceFloats(false);
 			
 			if (move.isPresent()) {
-				model.performMove(move.orElse(null));
+				moveListeners.fire(move.orElse(null));
 				onDrop(dragged);
 			} else {
 				dragged.getOrigin().getModel().setPiece(piece);
@@ -102,6 +117,14 @@ public class ChessBoardController {
 	
 	private void onDrop(FloatingChessPieceView dragged) {
 		view.setHighlightedFields(Collections.emptySet());
+	}
+	
+	public EventListenerList<ChessMove> getMoveListeners() {
+		return moveListeners;
+	}
+	
+	public ChessBoardModel getModel() {
+		return model;
 	}
 	
 	public JComponent getViewComponent() {

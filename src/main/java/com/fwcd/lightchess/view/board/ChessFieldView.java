@@ -1,4 +1,4 @@
-package com.fwcd.lightchess.view;
+package com.fwcd.lightchess.view.board;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -10,6 +10,7 @@ import com.fwcd.fructose.geometry.Rectangle2D;
 import com.fwcd.fructose.swing.Rendereable;
 import com.fwcd.lightchess.model.ChessFieldModel;
 import com.fwcd.lightchess.model.piece.ChessPieceModel;
+import com.fwcd.lightchess.view.ImageLoader;
 
 public class ChessFieldView implements Rendereable {
 	private final ChessFieldModel model;

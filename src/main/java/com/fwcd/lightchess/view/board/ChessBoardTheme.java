@@ -1,4 +1,4 @@
-package com.fwcd.lightchess.view;
+package com.fwcd.lightchess.view.board;
 
 import java.awt.Color;
 

@@ -1,4 +1,4 @@
-package com.fwcd.lightchess.view;
+package com.fwcd.lightchess.view.board;
 
 import com.fwcd.fructose.geometry.Vector2D;
 

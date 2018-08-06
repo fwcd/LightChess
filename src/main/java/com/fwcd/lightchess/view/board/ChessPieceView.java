@@ -1,9 +1,10 @@
-package com.fwcd.lightchess.view;
+package com.fwcd.lightchess.view.board;
 
 import java.awt.Graphics2D;
 
 import com.fwcd.fructose.geometry.Vector2D;
 import com.fwcd.lightchess.model.piece.ChessPieceModel;
+import com.fwcd.lightchess.view.ImageLoader;
 
 public class ChessPieceView {
 	private final ChessPieceModel model;

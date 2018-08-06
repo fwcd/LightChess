@@ -1,4 +1,4 @@
-package com.fwcd.lightchess.view;
+package com.fwcd.lightchess.view.board;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -13,6 +13,7 @@ import com.fwcd.lightchess.model.piece.KnightModel;
 import com.fwcd.lightchess.model.piece.PawnModel;
 import com.fwcd.lightchess.model.piece.QueenModel;
 import com.fwcd.lightchess.model.piece.RookModel;
+import com.fwcd.lightchess.view.ImageLoader;
 
 public class ChessPieceRenderer implements ChessPieceVisitor {
 	private final ImageLoader loader;
