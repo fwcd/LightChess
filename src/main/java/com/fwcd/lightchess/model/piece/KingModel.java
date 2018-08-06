@@ -18,11 +18,14 @@ public class KingModel extends AbstractPieceModel {
 		Stream.Builder<ChessMove> moves = Stream.builder();
 		ChessPosition origin = getPosition();
 		
+		// TODO: Filter moves into checks
+		
 		for (int dy=-1; dy<=1; dy++) {
 			for (int dx=-1; dx<=1; dx++) {
 				origin.plus(dx, dy)
 					.filter(it -> !board.fieldAt(it).hasPieceOfColor(getColor()))
 					.map(it -> new ChessMove(this, origin, it))
+					.filter(it -> !causesCheck(it, board))
 					.ifPresent(moves::add);
 			}
 		}
@@ -30,12 +33,14 @@ public class KingModel extends AbstractPieceModel {
 		return moves.build().distinct();
 	}
 	
+	private boolean causesCheck(ChessMove move, ChessBoardModel board) {
+		return board.piecesOfColor(getColor().opponent())
+			.anyMatch(it -> (it.getType() != ChessPieceType.KING) && it.threatens(move.getDestination(), board));
+	}
+	
 	public boolean isChecked(ChessBoardModel board) {
 		return board.piecesOfColor(getColor().opponent())
-			.filter(it -> it.threatens(this, board))
-			.findAny()
-			.isPresent();
-			
+			.anyMatch(it -> (it.getType() != ChessPieceType.KING) && it.threatens(getPosition(), board));
 	}
 	
 	public boolean isCheckmate(ChessBoardModel board) {
@@ -49,4 +54,7 @@ public class KingModel extends AbstractPieceModel {
 	
 	@Override
 	public ChessPieceType getType() { return ChessPieceType.KING; }
+	
+	@Override
+	public ChessPieceModel copy() { return new KingModel(getColor(), getPosition()); }
 }

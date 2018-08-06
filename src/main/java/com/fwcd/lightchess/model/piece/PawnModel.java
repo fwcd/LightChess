@@ -113,5 +113,14 @@ public class PawnModel extends AbstractPieceModel {
 	}
 	
 	@Override
+	public boolean threatens(ChessPosition position, ChessBoardModel board) {
+		return diagonalStepsFrom(getPosition())
+				.anyMatch(it -> it.equals(position));
+	}
+	
+	@Override
 	public ChessPieceType getType() { return ChessPieceType.PAWN; }
+	
+	@Override
+	public ChessPieceModel copy() { return new PawnModel(getColor(), getPosition()); }
 }

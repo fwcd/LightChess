@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
+import com.fwcd.fructose.Copyable;
 import com.fwcd.lightchess.model.piece.BishopModel;
 import com.fwcd.lightchess.model.piece.ChessPieceModel;
 import com.fwcd.lightchess.model.piece.ChessPieceType;
@@ -16,20 +17,29 @@ import com.fwcd.lightchess.model.piece.RookModel;
 import com.fwcd.lightchess.utils.ChessConstants;
 import com.fwcd.lightchess.utils.Streams;
 
-public class ChessBoardModel {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ChessBoardModel implements Copyable<ChessBoardModel> {
+	private static final Logger LOG = LoggerFactory.getLogger(ChessBoardModel.class);
 	private final ChessFieldModel[][] fields;
 	
-	public ChessBoardModel() {
+	private ChessBoardModel() {
 		fields = new ChessFieldModel[ChessConstants.RANKS][ChessConstants.FILES];
+	}
+	
+	public static ChessBoardModel empty() {
+		ChessBoardModel board = new ChessBoardModel();
 		for (int y=0; y<ChessConstants.RANKS; y++) {
 			for (int x=0; x<ChessConstants.FILES; x++) {
-				fields[y][x] = new ChessFieldModel(ChessPosition.at(x, y));
+				board.fields[y][x] = new ChessFieldModel(ChessPosition.at(x, y));
 			}
 		}
+		return board;
 	}
 	
 	public static ChessBoardModel withInitialSetup() {
-		ChessBoardModel board = new ChessBoardModel();
+		ChessBoardModel board = ChessBoardModel.empty();
 		for (PlayerColor color : PlayerColor.values()) {
 			int pawnsY = (color == PlayerColor.BLACK)  ? 1 : 6;
 			int piecesY = (color == PlayerColor.BLACK) ? 0 : 7;
@@ -72,6 +82,12 @@ public class ChessBoardModel {
 			.findAny();
 	}
 	
+	public ChessBoardModel spawnChild(ChessMove move) {
+		ChessBoardModel board = copy();
+		board.performMove(move);
+		return board;
+	}
+	
 	public void performMove(ChessMove move) {
 		ChessPieceModel piece = move.getPiece();
 		ChessPosition origin = move.getOrigin();
@@ -83,6 +99,8 @@ public class ChessBoardModel {
 			fieldAt(capturePos).setPiece(Optional.empty());
 		});
 		piece.moveTo(destination);
+		
+		LOG.debug("Committed move - stalemate: {} - check: {} - checkmate: {}", getStalemate(), getCheckedKing(), getCheckmate());
 	}
 	
 	public ChessFieldModel fieldAt(ChessPosition position) {
@@ -104,9 +122,7 @@ public class ChessBoardModel {
 	
 	public boolean canMove(PlayerColor color) {
 		return piecesOfColor(color)
-			.filter(it -> it.canMove(this))
-			.findAny()
-			.isPresent();
+			.anyMatch(it -> it.canMove(this));
 	}
 	
 	public Stream<ChessFieldModel> fields() {
@@ -142,4 +158,15 @@ public class ChessBoardModel {
 	public Stream<PawnModel> pawns() { return piecesOfType(ChessPieceType.PAWN).map(it -> (PawnModel) it); }
 	
 	public Stream<RookModel> rooks() { return piecesOfType(ChessPieceType.ROOK).map(it -> (RookModel) it); }
+	
+	@Override
+	public ChessBoardModel copy() {
+		ChessBoardModel copy = new ChessBoardModel();
+		for (int y=0; y<fields.length; y++) {
+			for (int x=0; x<fields[y].length; x++) {
+				copy.fields[y][x] = fields[y][x].copy();
+			}
+		}
+		return copy;
+	}
 }

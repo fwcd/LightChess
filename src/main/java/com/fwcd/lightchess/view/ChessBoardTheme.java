@@ -4,8 +4,8 @@ import java.awt.Color;
 
 public class ChessBoardTheme {
 	public static final ChessBoardTheme WOODEN = new ChessBoardTheme(
-		/* darkBG */ new Color(255, 194, 63),
-		/* brightBG */ new Color(229, 171, 45),
+		/* darkBG */ new Color(229, 171, 45),
+		/* brightBG */ new Color(255, 194, 63),
 		/* highlightColor */ new Color(255, 255, 255, 128)
 	);
 	

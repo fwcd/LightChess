@@ -32,4 +32,7 @@ public class RookModel extends AbstractPieceModel {
 	
 	@Override
 	public ChessPieceType getType() { return ChessPieceType.ROOK; }
+	
+	@Override
+	public ChessPieceModel copy() { return new RookModel(getColor(), getPosition()); }
 }

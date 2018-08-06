@@ -2,13 +2,14 @@ package com.fwcd.lightchess.model.piece;
 
 import java.util.stream.Stream;
 
+import com.fwcd.fructose.Copyable;
 import com.fwcd.lightchess.model.ChessBoardModel;
 import com.fwcd.lightchess.model.ChessMove;
 import com.fwcd.lightchess.model.ChessPosition;
 import com.fwcd.lightchess.model.PlayerColor;
 
 /** A chess piece */
-public interface ChessPieceModel {
+public interface ChessPieceModel extends Copyable<ChessPieceModel> {
 	Stream<ChessMove> getPossibleMoves(ChessBoardModel board);
 	
 	void accept(ChessPieceVisitor visitor);
@@ -21,13 +22,7 @@ public interface ChessPieceModel {
 	
 	ChessPosition getPosition();
 	
-	default boolean threatens(ChessPieceModel piece, ChessBoardModel board) {
-		return getPossibleMoves(board)
-			.map(ChessMove::getDestination)
-			.filter(dest -> dest.equals(piece.getPosition()))
-			.findAny()
-			.isPresent();
-	}
+	boolean threatens(ChessPosition position, ChessBoardModel board);
 	
 	default boolean canBeCapturedThroughEnPassant() {
 		return false;

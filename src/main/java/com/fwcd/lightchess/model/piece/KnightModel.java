@@ -43,4 +43,7 @@ public class KnightModel extends AbstractPieceModel {
 	
 	@Override
 	public ChessPieceType getType() { return ChessPieceType.KNIGHT; }
+	
+	@Override
+	public ChessPieceModel copy() { return new KnightModel(getColor(), getPosition()); }
 }

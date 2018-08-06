@@ -3,16 +3,23 @@ package com.fwcd.lightchess.model;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import com.fwcd.fructose.Copyable;
 import com.fwcd.fructose.Observable;
 import com.fwcd.lightchess.model.piece.ChessPieceModel;
 import com.fwcd.lightchess.model.piece.ChessPieceType;
 
-public class ChessFieldModel {
+public class ChessFieldModel implements Copyable<ChessFieldModel> {
 	private final ChessPosition position;
-	private Observable<Optional<ChessPieceModel>> piece = new Observable<>(Optional.empty());
+	private Observable<Optional<ChessPieceModel>> piece;
 	
 	public ChessFieldModel(ChessPosition position) {
 		this.position = position;
+		piece = new Observable<>(Optional.empty());
+	}
+	
+	private ChessFieldModel(ChessPosition position, Optional<ChessPieceModel> piece) {
+		this.position = position;
+		this.piece = new Observable<>(piece);
 	}
 	
 	public boolean hasPiece() { return piece.get().isPresent(); }
@@ -37,4 +44,9 @@ public class ChessFieldModel {
 	public void setPiece(ChessPieceModel piece) { this.piece.set(Optional.of(piece)); }
 	
 	public Optional<ChessPieceModel> getPiece() { return piece.get(); }
+	
+	@Override
+	public ChessFieldModel copy() {
+		return new ChessFieldModel(position, piece.get().map(ChessPieceModel::copy));
+	}
 }
