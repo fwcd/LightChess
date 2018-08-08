@@ -34,9 +34,9 @@ public class ChessMatch {
 			LOG.info("{}'s turn", (whiteHasTurn ? "White" : "Black"));
 			ChessMove move;
 			if (whiteHasTurn) {
-				move = white.pickMove(board);
+				move = white.pickMove(PlayerColor.WHITE, board);
 			} else {
-				move = black.pickMove(board);
+				move = black.pickMove(PlayerColor.BLACK, board);
 			}
 			board.performMove(move);
 			whiteHasTurn = !whiteHasTurn;

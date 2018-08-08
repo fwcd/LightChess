@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.fwcd.lightchess.controller.ChessBoardController;
 import com.fwcd.lightchess.model.ChessBoardModel;
 import com.fwcd.lightchess.model.ChessMove;
+import com.fwcd.lightchess.model.PlayerColor;
 import com.fwcd.lightchess.model.match.ChessPlayer;
 
 public class HumanPlayer implements ChessPlayer {
@@ -18,9 +19,9 @@ public class HumanPlayer implements ChessPlayer {
 	}
 	
 	@Override
-	public ChessMove pickMove(ChessBoardModel board) {
+	public ChessMove pickMove(PlayerColor me, ChessBoardModel board) {
 		move = Optional.empty();
-		chessBoard.setUserInteractionsEnabled(true);
+		chessBoard.setMoveableColors(me);
 		while (!move.isPresent()) {
 			try {
 				Thread.sleep(100);
@@ -28,7 +29,7 @@ public class HumanPlayer implements ChessPlayer {
 				throw new RuntimeException(e);
 			}
 		}
-		chessBoard.setUserInteractionsEnabled(false);
+		chessBoard.setMoveableColors(/* none */);
 		return move.orElseThrow(ConcurrentModificationException::new);
 	}
 }

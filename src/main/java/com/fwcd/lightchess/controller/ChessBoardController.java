@@ -2,9 +2,11 @@ package com.fwcd.lightchess.controller;
 
 import java.awt.event.MouseEvent;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.JComponent;
 
@@ -15,6 +17,7 @@ import com.fwcd.fructose.swing.MouseHandler;
 import com.fwcd.lightchess.model.ChessBoardModel;
 import com.fwcd.lightchess.model.ChessMove;
 import com.fwcd.lightchess.model.ChessPosition;
+import com.fwcd.lightchess.model.PlayerColor;
 import com.fwcd.lightchess.model.piece.ChessPieceModel;
 import com.fwcd.lightchess.view.board.ChessBoardView;
 import com.fwcd.lightchess.view.board.ChessFieldView;
@@ -23,8 +26,9 @@ import com.fwcd.lightchess.view.board.FloatingChessPieceView;
 public class ChessBoardController {
 	private final ChessBoardModel model;
 	private final ChessBoardView view;
-	private EventListenerList<ChessMove> moveListeners = new EventListenerList<>();
-	private boolean userInteractionsEnabled = false;
+	private final EventListenerList<ChessMove> moveListeners = new EventListenerList<>();
+	/** Pieces with a "moveableColor" can be dragged by the user when interacting with the GUI */
+	private Set<PlayerColor> moveableColors = new HashSet<>();
 	
 	public ChessBoardController(ChessBoardModel model, ChessBoardView view) {
 		this.model = model;
@@ -33,24 +37,20 @@ public class ChessBoardController {
 		setupViewListeners();
 	}
 	
-	public void setUserInteractionsEnabled(boolean userInteractionsEnabled) {
-		this.userInteractionsEnabled = userInteractionsEnabled;
+	public void setMoveableColors(PlayerColor... moveableColors) {
+		this.moveableColors = Stream.of(moveableColors).collect(Collectors.toSet());
 	}
 	
 	private void setupViewListeners() {
 		MouseHandler handler = new MouseHandler() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if (userInteractionsEnabled) {
-					onMouseDown(posOf(e));
-				}
+				onMouseDown(posOf(e));
 			}
 			
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				if (userInteractionsEnabled) {
-					onMouseDrag(posOf(e));
-				}
+				onMouseDrag(posOf(e));
 			}
 			
 			@Override
@@ -67,13 +67,16 @@ public class ChessBoardController {
 				boolean boundsContainPos = field.getBounds().filter(it -> it.contains(pos)).isPresent();
 				if (boundsContainPos) {
 					field.getPiece().ifPresent(piece -> {
-						Rectangle2D bounds = field.getBounds().orElseThrow(IllegalStateException::new);
-						Vector2D offset = bounds.getTopLeft().sub(pos);
-						FloatingChessPieceView dragged = new FloatingChessPieceView(piece, field, pos, offset);
+						if (moveableColors.contains(piece.getModel().getColor())) {
+							Rectangle2D bounds = field.getBounds().orElseThrow(IllegalStateException::new);
+							Vector2D offset = bounds.getTopLeft().sub(pos);
+							FloatingChessPieceView dragged = new FloatingChessPieceView(piece, field, pos, offset);
+							
+							field.setPieceFloats(true);
+							view.setFloating(Optional.of(dragged));
+							onDragStart(dragged);
+						}
 						
-						field.setPieceFloats(true);
-						view.setFloating(Optional.of(dragged));
-						onDragStart(dragged);
 					});
 					return;
 				}
