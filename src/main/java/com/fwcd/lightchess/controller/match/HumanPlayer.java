@@ -19,6 +19,7 @@ public class HumanPlayer implements ChessPlayer {
 	
 	@Override
 	public ChessMove pickMove(ChessBoardModel board) {
+		move = Optional.empty();
 		chessBoard.setUserInteractionsEnabled(true);
 		while (!move.isPresent()) {
 			try {

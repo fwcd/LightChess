@@ -14,8 +14,9 @@ import com.fwcd.lightchess.view.ImageLoader;
 
 public class ChessFieldView implements Rendereable {
 	private final ChessFieldModel model;
-	private final ChessBoardTheme theme;
+	private final Runnable repainter;
 	private final ImageLoader imageLoader;
+	private final ChessBoardTheme theme;
 	private final boolean isDark;
 	private Optional<ChessPieceView> piece = Optional.empty();
 	private Optional<Rectangle2D> bounds = Optional.empty();
@@ -24,11 +25,13 @@ public class ChessFieldView implements Rendereable {
 	
 	public ChessFieldView(
 		ChessFieldModel model,
+		Runnable repainter,
 		ImageLoader imageLoader,
 		ChessBoardTheme theme,
 		boolean isDark
 	) {
 		this.model = model;
+		this.repainter = repainter;
 		this.theme = theme;
 		this.isDark = isDark;
 		this.imageLoader = imageLoader;
@@ -42,6 +45,7 @@ public class ChessFieldView implements Rendereable {
 	
 	private void setPiece(Optional<ChessPieceModel> pieceModel) {
 		piece = pieceModel.map(it -> new ChessPieceView(it, imageLoader));
+		repainter.run();
 	}
 	
 	public void setPieceFloats(boolean pieceFloats) {

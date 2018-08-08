@@ -95,7 +95,7 @@ public class ChessBoardModel implements Copyable<ChessBoardModel> {
 		ChessFieldModel originField = fieldAt(origin);
 		ChessFieldModel destField = fieldAt(destination);
 		ChessPieceModel piece = originField.getPiece()
-			.orElseThrow(() -> new UnsupportedOperationException("Tried to move non-existent chess piece"));
+			.orElseThrow(() -> new UnsupportedOperationException("Tried to move non-existent chess piece at " + origin));
 		
 		originField.setPiece(Optional.empty());
 		destField.setPiece(piece);
@@ -106,7 +106,7 @@ public class ChessBoardModel implements Copyable<ChessBoardModel> {
 			ChessFieldModel relocationOriginField = fieldAt(otherRelocation.getKey());
 			ChessFieldModel relocationDestField = fieldAt(otherRelocation.getValue());
 			ChessPieceModel relocatedPiece = relocationOriginField.getPiece()
-				.orElseThrow(() -> new UnsupportedOperationException("Tried to relocate non-existent chess piece"));
+				.orElseThrow(() -> new UnsupportedOperationException("Tried to relocate non-existent chess piece at " + otherRelocation.getKey()));
 			relocationOriginField.setPiece(Optional.empty());
 			relocationDestField.setPiece(relocatedPiece);
 			relocatedPiece.moveTo(relocationDestField.getPosition());

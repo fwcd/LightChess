@@ -54,7 +54,9 @@ public class ChessBoardController {
 			}
 			
 			@Override
-			public void mouseReleased(MouseEvent e) { onMouseUp(posOf(e)); }
+			public void mouseReleased(MouseEvent e) {
+				onMouseUp(posOf(e));
+			}
 		};
 		view.addMouseHandler(handler);
 	}
@@ -102,7 +104,6 @@ public class ChessBoardController {
 			} else {
 				dragged.getOrigin().getModel().setPiece(piece);
 			}
-			view.repaint();
 		});
 		view.setFloating(Optional.empty());
 	}

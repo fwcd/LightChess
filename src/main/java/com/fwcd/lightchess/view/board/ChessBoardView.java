@@ -44,7 +44,7 @@ public class ChessBoardView implements Viewable {
 		boolean isDark = false;
 		for (int y=0; y<ChessConstants.RANKS; y++) {
 			for (int x=0; x<ChessConstants.FILES; x++) {
-				fields[y][x] = new ChessFieldView(model.fieldAt(ChessPosition.at(x, y)), imageLoader, theme, isDark);
+				fields[y][x] = new ChessFieldView(model.fieldAt(ChessPosition.at(x, y)), view::repaint, imageLoader, theme, isDark);
 				isDark = !isDark;
 			}
 			isDark = !isDark;

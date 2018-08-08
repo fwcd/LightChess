@@ -7,14 +7,19 @@ import com.fwcd.lightchess.model.ChessMove;
 import com.fwcd.lightchess.model.PlayerColor;
 import com.fwcd.lightchess.model.piece.ChessPieceModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ChessMatch {
-	private final ChessBoardModel board = ChessBoardModel.withInitialSetup();
+	private static final Logger LOG = LoggerFactory.getLogger(ChessMatch.class);
+	private final ChessBoardModel board;
 	private final ChessPlayer white;
 	private final ChessPlayer black;
 	private boolean started = false;
 	private boolean whiteHasTurn = true;
 	
-	public ChessMatch(ChessPlayer white, ChessPlayer black) {
+	public ChessMatch(ChessBoardModel board, ChessPlayer white, ChessPlayer black) {
+		this.board = board;
 		this.white = white;
 		this.black = black;
 	}
@@ -26,6 +31,7 @@ public class ChessMatch {
 		started = true;
 		
 		while (!board.isGameOver()) {
+			LOG.info("{}'s turn", (whiteHasTurn ? "White" : "Black"));
 			ChessMove move;
 			if (whiteHasTurn) {
 				move = white.pickMove(board);
