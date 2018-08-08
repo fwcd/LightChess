@@ -7,35 +7,38 @@ import java.util.function.Supplier;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.MutableComboBoxModel;
 
 import com.fwcd.fructose.swing.Viewable;
+import com.fwcd.lightchess.model.MatchConfiguratorModel;
 import com.fwcd.lightchess.model.match.ChessPlayer;
 
-public class NewMatchPanel implements Viewable {
+public class MatchConfiguratorView implements Viewable {
 	private final JPanel view;
 	private final MutableComboBoxModel<String> whiteDropDownModel = new DefaultComboBoxModel<>();
 	private final MutableComboBoxModel<String> blackDropDownModel = new DefaultComboBoxModel<>();
-	private final Map<String, Supplier<ChessPlayer>> playerFactory = new HashMap<>();
 	
-	public NewMatchPanel() {
+	public MatchConfiguratorView(MatchConfiguratorModel model) {
 		view = new JPanel();
+		view.add(new JLabel("White: "));
 		view.add(new JComboBox<>(whiteDropDownModel));
+		view.add(new JLabel("Black: "));
 		view.add(new JComboBox<>(blackDropDownModel));
+		
+		model.getPlayerFactory().listenToPut(this::addPlayer);
+		model.getPlayerFactory().listenToRemove(this::removePlayer);
 	}
 	
-	public void addPlayer(String name, Supplier<ChessPlayer> constructor) {
-		if (playerFactory.containsKey(name)) {
-			throw new IllegalStateException("Tried to add duplicate player name: " + name);
-		}
+	private void addPlayer(String name, Supplier<ChessPlayer> constructor) {
 		whiteDropDownModel.addElement(name);
 		blackDropDownModel.addElement(name);
-		playerFactory.put(name, constructor);
 	}
 	
-	public void addPlayerAsync(String name, Supplier<ChessPlayer> constructor) {
-		
+	private void removePlayer(String name, Supplier<ChessPlayer> constructor) {
+		whiteDropDownModel.removeElement(name);
+		blackDropDownModel.removeElement(name);
 	}
 	
 	@Override

@@ -12,17 +12,17 @@ import com.fwcd.lightchess.view.board.ChessBoardView;
 public class AppView implements Viewable {
 	private final JPanel view;
 	private final ChessBoardView chessBoard;
-	private final NewMatchPanel newMatchPanel;
+	private final MatchConfiguratorView matchConfigurator;
 	
 	public AppView(AppModel model) {
 		view = new JPanel();
 		view.setLayout(new BorderLayout());
 		
 		chessBoard = new ChessBoardView(model.getChessBoard());
-		newMatchPanel = new NewMatchPanel();
+		matchConfigurator = new MatchConfiguratorView(model.getMatchConfigurator());
 		
 		view.add(chessBoard.getView(), BorderLayout.CENTER);
-		view.add(newMatchPanel.getView(), BorderLayout.NORTH);
+		view.add(matchConfigurator.getView(), BorderLayout.NORTH);
 	}
 	
 	@Override
@@ -30,7 +30,7 @@ public class AppView implements Viewable {
 		return view;
 	}
 	
-	public NewMatchPanel getNewMatchPanel() { return newMatchPanel; }
+	public MatchConfiguratorView getMatchConfigurator() { return matchConfigurator; }
 	
 	public ChessBoardView getChessBoard() { return chessBoard; }
 }
