@@ -36,4 +36,7 @@ public class BishopModel extends AbstractPieceModel {
 	
 	@Override
 	public ChessPieceModel copy() { return new BishopModel(getColor(), getPosition()); }
+	
+	@Override
+	public int getValue() { return 3; }
 }

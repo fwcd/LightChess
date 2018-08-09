@@ -14,6 +14,9 @@ public interface ChessPieceModel extends Copyable<ChessPieceModel> {
 	
 	void accept(ChessPieceVisitor visitor);
 	
+	/** Fetches the value of this piece (returns 0 for a king) */
+	int getValue();
+	
 	PlayerColor getColor();
 	
 	ChessPieceType getType();

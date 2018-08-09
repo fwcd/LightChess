@@ -66,6 +66,14 @@ public class ChessBoardModel implements Copyable<ChessBoardModel> {
 			.findAny();
 	}
 	
+	public Optional<PlayerColor> getWinner() {
+		return getCheckmate()
+			.map(KingModel::getColor)
+			.map(Optional::of)
+			.orElseGet(this::getStalemate)
+			.map(PlayerColor::opponent);
+	}
+	
 	public boolean isGameOver() {
 		return getCheckmate().isPresent() || getStalemate().isPresent();
 	}
@@ -112,6 +120,11 @@ public class ChessBoardModel implements Copyable<ChessBoardModel> {
 			relocatedPiece.moveTo(relocationDestField.getPosition());
 		}
 		piece.moveTo(destination);
+	}
+	
+	public Stream<ChessMove> getPossibleMovesFor(PlayerColor color) {
+		return piecesOfColor(color)
+			.flatMap(piece -> piece.getPossibleMoves(this));
 	}
 	
 	public void performMove(ChessMove move) {

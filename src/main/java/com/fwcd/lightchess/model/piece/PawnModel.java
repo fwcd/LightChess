@@ -128,4 +128,7 @@ public class PawnModel extends AbstractPieceModel {
 	
 	@Override
 	public ChessPieceModel copy() { return new PawnModel(getColor(), getPosition(), moves); }
+	
+	@Override
+	public int getValue() { return 1; }
 }

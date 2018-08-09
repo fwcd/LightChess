@@ -40,4 +40,7 @@ public class QueenModel extends AbstractPieceModel {
 	
 	@Override
 	public ChessPieceModel copy() { return new QueenModel(getColor(), getPosition()); }
+	
+	@Override
+	public int getValue() { return 9; }
 }

@@ -116,4 +116,7 @@ public class KingModel extends AbstractPieceModel {
 	
 	@Override
 	public ChessPieceModel copy() { return new KingModel(getColor(), getPosition(), moved); }
+	
+	@Override
+	public int getValue() { return 0; }
 }

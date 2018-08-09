@@ -59,4 +59,7 @@ public class RookModel extends AbstractPieceModel {
 	
 	@Override
 	public ChessPieceModel copy() { return new RookModel(getColor(), getPosition(), moved); }
+	
+	@Override
+	public int getValue() { return 5; }
 }

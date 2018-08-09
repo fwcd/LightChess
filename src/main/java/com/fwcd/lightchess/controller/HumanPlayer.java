@@ -1,4 +1,4 @@
-package com.fwcd.lightchess.controller.match;
+package com.fwcd.lightchess.controller;
 
 import java.util.ConcurrentModificationException;
 import java.util.Optional;
