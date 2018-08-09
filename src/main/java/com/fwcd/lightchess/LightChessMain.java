@@ -25,7 +25,7 @@ public class LightChessMain {
 		new AppController(model, view);
 		
 		JFrame frame = new JFrame("LightChess");
-		frame.setSize(750, 750);
+		frame.setSize(640, 670);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		
