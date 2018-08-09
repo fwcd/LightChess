@@ -3,6 +3,7 @@ package com.fwcd.lightchess.view;
 import java.awt.BorderLayout;
 
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.fwcd.fructose.swing.Viewable;
@@ -20,6 +21,10 @@ public class AppView implements Viewable {
 		
 		chessBoard = new ChessBoardView(model.getChessBoard());
 		matchConfigurator = new MatchConfiguratorView(model.getMatchConfigurator());
+		
+		model.getMatchManager().listenToResults(result -> {
+			JOptionPane.showMessageDialog(view, result.getResultType() + " - " + result.getWinner() + " wins!");
+		});
 		
 		view.add(chessBoard.getView(), BorderLayout.CENTER);
 		view.add(matchConfigurator.getView(), BorderLayout.NORTH);

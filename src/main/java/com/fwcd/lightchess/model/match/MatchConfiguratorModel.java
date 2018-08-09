@@ -20,8 +20,8 @@ public class MatchConfiguratorModel {
 	
 	public void setBlack(ChessPlayer black) { this.black = Optional.of(black); }
 	
-	public void createMatch() {
-		manager.createMatch(
+	public boolean createMatch() {
+		return manager.createMatch(
 			white.orElseThrow(() -> new IllegalStateException("Can't create a match without a white player")),
 			black.orElseThrow(() -> new IllegalStateException("Can't create a match without a black player"))
 		);

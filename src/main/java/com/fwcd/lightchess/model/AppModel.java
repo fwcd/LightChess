@@ -11,4 +11,6 @@ public class AppModel {
 	public ChessBoardModel getChessBoard() { return chessBoard; }
 	
 	public MatchConfiguratorModel getMatchConfigurator() { return matchConfigurator; }
+	
+	public MatchManager getMatchManager() { return matchManager; }
 }

@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 public class ChessBoardModel implements Copyable<ChessBoardModel> {
 	private static final Logger LOG = LoggerFactory.getLogger(ChessBoardModel.class);
-	private final ChessFieldModel[][] fields;
+	private ChessFieldModel[][] fields;
 	
 	private ChessBoardModel() {
 		fields = new ChessFieldModel[ChessConstants.RANKS][ChessConstants.FILES];
@@ -40,24 +40,41 @@ public class ChessBoardModel implements Copyable<ChessBoardModel> {
 	}
 	
 	public static ChessBoardModel withInitialSetup() {
-		ChessBoardModel board = ChessBoardModel.empty();
+		ChessBoardModel board = empty();
+		board.placeInitialPieces();
+		return board;
+	}
+	
+	public void clear() {
+		for (ChessFieldModel[] rank : fields) {
+			for (ChessFieldModel field : rank) {
+				field.setPiece(Optional.empty());
+			}
+		}
+	}
+	
+	public void resetToInitialSetup() {
+		clear();
+		placeInitialPieces();
+	}
+	
+	private void placeInitialPieces() {
 		for (PlayerColor color : PlayerColor.values()) {
 			int pawnsY = (color == PlayerColor.BLACK)  ? 1 : 6;
 			int piecesY = (color == PlayerColor.BLACK) ? 0 : 7;
 			
 			for (int x=0; x<ChessConstants.FILES; x++) {
-				board.placeAt(x, pawnsY, color, PawnModel::new);
+				placeAt(x, pawnsY, color, PawnModel::new);
 			}
-			board.placeAt(0, piecesY, color, RookModel::new);
-			board.placeAt(1, piecesY, color, KnightModel::new);
-			board.placeAt(2, piecesY, color, BishopModel::new);
-			board.placeAt(3, piecesY, color, QueenModel::new);
-			board.placeAt(4, piecesY, color, KingModel::new);
-			board.placeAt(5, piecesY, color, BishopModel::new);
-			board.placeAt(6, piecesY, color, KnightModel::new);
-			board.placeAt(7, piecesY, color, RookModel::new);
+			placeAt(0, piecesY, color, RookModel::new);
+			placeAt(1, piecesY, color, KnightModel::new);
+			placeAt(2, piecesY, color, BishopModel::new);
+			placeAt(3, piecesY, color, QueenModel::new);
+			placeAt(4, piecesY, color, KingModel::new);
+			placeAt(5, piecesY, color, BishopModel::new);
+			placeAt(6, piecesY, color, KnightModel::new);
+			placeAt(7, piecesY, color, RookModel::new);
 		}
-		return board;
 	}
 	
 	public Optional<KingModel> getCheckedKing() {

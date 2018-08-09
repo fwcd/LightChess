@@ -2,6 +2,7 @@ package com.fwcd.lightchess.model.match;
 
 import java.util.Optional;
 
+import com.fwcd.fructose.EventListenerList;
 import com.fwcd.lightchess.model.ChessBoardModel;
 import com.fwcd.lightchess.model.ChessMove;
 import com.fwcd.lightchess.model.PlayerColor;
@@ -15,7 +16,9 @@ public class ChessMatch {
 	private final ChessBoardModel board;
 	private final ChessPlayer white;
 	private final ChessPlayer black;
+	private EventListenerList<ChessMatchResult> resultListeners = new EventListenerList<>();
 	private boolean started = false;
+	private boolean gameOver = false;
 	private boolean whiteHasTurn = true;
 	
 	public ChessMatch(ChessBoardModel board, ChessPlayer white, ChessPlayer black) {
@@ -44,13 +47,29 @@ public class ChessMatch {
 		
 		Optional<PlayerColor> checkmate = board.getCheckmate().map(ChessPieceModel::getColor);
 		Optional<PlayerColor> stalemate = board.getStalemate();
+		PlayerColor winner;
+		ChessResultType resultType;
 		
 		if (checkmate.isPresent()) {
-			return new ChessMatchResult(checkmate.orElse(null), ChessResultType.CHECKMATE);
+			winner = checkmate.orElse(null).opponent();
+			resultType = ChessResultType.CHECKMATE;
 		} else if (stalemate.isPresent()) {
-			return new ChessMatchResult(stalemate.orElse(null), ChessResultType.STALEMATE);
+			winner = stalemate.orElse(null).opponent();
+			resultType = ChessResultType.STALEMATE;
 		} else {
 			throw new IllegalStateException("Invalid match result: Neither a checkmate nor a stalemate");
 		}
+		
+		gameOver = true;
+		ChessMatchResult result = new ChessMatchResult(winner, resultType);
+		resultListeners.fire(result);
+		
+		return result;
+	}
+	
+	public boolean isGameOver() { return gameOver; }
+	
+	public void setResultListeners(EventListenerList<ChessMatchResult> resultListeners) {
+		this.resultListeners = resultListeners;
 	}
 }
