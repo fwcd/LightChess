@@ -19,15 +19,11 @@ public class HumanPlayer implements ChessPlayer {
 	}
 	
 	@Override
-	public ChessMove pickMove(PlayerColor me, ChessBoardModel board) {
+	public ChessMove pickMove(PlayerColor me, ChessBoardModel board) throws InterruptedException {
 		move = Optional.empty();
 		chessBoard.setMoveableColors(me);
 		while (!move.isPresent()) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				throw new RuntimeException(e);
-			}
+			Thread.sleep(100);
 		}
 		chessBoard.setMoveableColors(/* none */);
 		return move.orElseThrow(ConcurrentModificationException::new);

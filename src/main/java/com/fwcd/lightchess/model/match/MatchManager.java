@@ -1,17 +1,19 @@
 package com.fwcd.lightchess.model.match;
 
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import com.fwcd.fructose.EventListenerList;
 import com.fwcd.lightchess.model.ChessBoardModel;
 
-public class MatchManager implements AutoCloseable {
-	private final ExecutorService matchExecutor = Executors.newSingleThreadExecutor();
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class MatchManager {
+	private static final Logger LOG = LoggerFactory.getLogger(MatchManager.class);
 	private final ChessBoardModel board;
 	private final EventListenerList<ChessMatchResult> resultListeners = new EventListenerList<>();
+	private Optional<Thread> matchThread = Optional.empty();
 	private Optional<ChessMatch> match = Optional.empty();
 	
 	public MatchManager(ChessBoardModel board) {
@@ -21,17 +23,41 @@ public class MatchManager implements AutoCloseable {
 	public boolean createMatch(ChessPlayer white, ChessPlayer black) {
 		if (match.filter(it -> !it.isGameOver()).isPresent()) {
 			// A match is currently running
-			return false;
-		} else {
-			board.resetToInitialSetup();
-			
-			ChessMatch newMatch = new ChessMatch(board, white, black);
-			newMatch.setResultListeners(resultListeners);
-			matchExecutor.execute(newMatch::play);
-			match = Optional.of(newMatch);
-			
-			return true;
+			stopMatch();
 		}
+		
+		board.resetToInitialSetup();
+		
+		ChessMatch newMatch = new ChessMatch(board, white, black);
+		newMatch.setResultListeners(resultListeners);
+		Thread newThread = new Thread(() -> {
+			try {
+				newMatch.play();
+			} catch (InterruptedException e) {
+				// Swallow this exception (which is usually thrown by
+				// stopMatch() to indicate that a match should terminate)
+			}
+		}, "ChessMatch runner");
+		newThread.start();
+		
+		LOG.info("Starting match");
+		
+		matchThread = Optional.of(newThread);
+		match = Optional.of(newMatch);
+		
+		return true;
+	}
+	
+	public void stopMatch() {
+		matchThread.ifPresent(it -> {
+			it.interrupt();
+			try {
+				LOG.info("Waiting for stopped match to terminate...");
+				it.join();
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		});
 	}
 	
 	public void listenToResults(Consumer<ChessMatchResult> listener) {
@@ -40,10 +66,5 @@ public class MatchManager implements AutoCloseable {
 	
 	public void unlistenFromResults(Consumer<ChessMatchResult> listener) {
 		resultListeners.remove(listener);
-	}
-	
-	@Override
-	public void close() {
-		matchExecutor.shutdown();
 	}
 }

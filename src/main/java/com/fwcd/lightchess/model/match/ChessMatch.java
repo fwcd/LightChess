@@ -27,7 +27,7 @@ public class ChessMatch {
 		this.black = black;
 	}
 	
-	public ChessMatchResult play() {
+	public ChessMatchResult play() throws InterruptedException {
 		if (started) {
 			throw new IllegalStateException("Can't play an already started ChessMatch");
 		}

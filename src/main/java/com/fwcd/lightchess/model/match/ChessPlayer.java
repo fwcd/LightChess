@@ -5,5 +5,5 @@ import com.fwcd.lightchess.model.ChessMove;
 import com.fwcd.lightchess.model.PlayerColor;
 
 public interface ChessPlayer {
-	ChessMove pickMove(PlayerColor me, ChessBoardModel board);
+	ChessMove pickMove(PlayerColor me, ChessBoardModel board) throws InterruptedException;
 }

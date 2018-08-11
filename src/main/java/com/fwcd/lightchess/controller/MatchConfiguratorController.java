@@ -10,7 +10,7 @@ public class MatchConfiguratorController {
 		view.getNewMatchButton().addActionListener(l -> {
 			boolean success = model.createMatch();
 			if (!success) {
-				JOptionPane.showMessageDialog(view.getView(), "A match is already running!");
+				JOptionPane.showMessageDialog(view.getView(), "A match can not be created!");
 			}
 		});
 	}
