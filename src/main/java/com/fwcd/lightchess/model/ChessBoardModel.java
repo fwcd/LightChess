@@ -121,9 +121,13 @@ public class ChessBoardModel implements Copyable<ChessBoardModel> {
 		ChessFieldModel destField = fieldAt(destination);
 		ChessPieceModel piece = originField.getPiece()
 			.orElseThrow(() -> new UnsupportedOperationException("Tried to move non-existent chess piece at " + origin));
+		Optional<ChessPieceModel> promotedPiece = move.getPromotedPiece()
+			.map(it -> it.construct(piece.getColor(), destination));
+		
+		piece.moveTo(destination);
 		
 		originField.setPiece(Optional.empty());
-		destField.setPiece(piece);
+		destField.setPiece(promotedPiece.orElse(piece));
 		for (ChessPosition otherCapture : move.getOtherCaptures()) {
 			fieldAt(otherCapture).setPiece(Optional.empty());
 		}
@@ -136,7 +140,6 @@ public class ChessBoardModel implements Copyable<ChessBoardModel> {
 			relocationDestField.setPiece(relocatedPiece);
 			relocatedPiece.moveTo(relocationDestField.getPosition());
 		}
-		piece.moveTo(destination);
 	}
 	
 	public Stream<ChessMove> getPossibleMovesFor(PlayerColor color) {

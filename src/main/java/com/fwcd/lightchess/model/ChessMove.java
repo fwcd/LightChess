@@ -3,6 +3,7 @@ package com.fwcd.lightchess.model;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.fwcd.lightchess.model.piece.ChessPieceType;
 
@@ -12,23 +13,38 @@ public class ChessMove {
 	private final ChessPosition destination;
 	private final List<ChessPosition> otherCaptures;
 	private final Map<ChessPosition, ChessPosition> otherRelocations;
+	private final Optional<ChessPieceType> promotedPiece;
 	
 	private ChessMove(
 		ChessPieceType pieceType,
 		ChessPosition origin,
 		ChessPosition destination,
 		List<ChessPosition> otherCaptures,
-		Map<ChessPosition, ChessPosition> otherRelocations
+		Map<ChessPosition, ChessPosition> otherRelocations,
+		Optional<ChessPieceType> promotedPiece
 	) {
 		this.pieceType = pieceType;
 		this.origin = origin;
 		this.destination = destination;
 		this.otherCaptures = otherCaptures;
 		this.otherRelocations = otherRelocations;
+		this.promotedPiece = promotedPiece;
 	}
 	
-	public static ChessMove create(ChessPieceType pieceType, ChessPosition origin, ChessPosition destination) {
-		return new ChessMove(pieceType, origin, destination, Collections.emptyList(), Collections.emptyMap());
+	public static ChessMove create(
+		ChessPieceType pieceType,
+		ChessPosition origin,
+		ChessPosition destination
+	) {
+		return new ChessMove(pieceType, origin, destination, Collections.emptyList(), Collections.emptyMap(), Optional.empty());
+	}
+	
+	public static ChessMove createPawnPromotion(
+		ChessPosition origin,
+		ChessPosition destination,
+		ChessPieceType promotedPiece
+	) {
+		return new ChessMove(ChessPieceType.PAWN, origin, destination, Collections.emptyList(), Collections.emptyMap(), Optional.of(promotedPiece));
 	}
 	
 	public static ChessMove createEnPassant(
@@ -37,7 +53,7 @@ public class ChessMove {
 		ChessPosition destination,
 		ChessPosition enPassantCapturePos
 	) {
-		return new ChessMove(pieceType, origin, destination, Collections.singletonList(enPassantCapturePos), Collections.emptyMap());
+		return new ChessMove(pieceType, origin, destination, Collections.singletonList(enPassantCapturePos), Collections.emptyMap(), Optional.empty());
 	}
 	
 	public static ChessMove createCastling(
@@ -47,7 +63,7 @@ public class ChessMove {
 		ChessPosition rookOrigin,
 		ChessPosition rookDestination
 	) {
-		return new ChessMove(pieceType, kingOrigin, kingDestination, Collections.emptyList(), Collections.singletonMap(rookOrigin, rookDestination));
+		return new ChessMove(pieceType, kingOrigin, kingDestination, Collections.emptyList(), Collections.singletonMap(rookOrigin, rookDestination), Optional.empty());
 	}
 	
 	public ChessPosition getDestination() { return destination; }
@@ -60,6 +76,8 @@ public class ChessMove {
 	
 	public Map<ChessPosition, ChessPosition> getOtherRelocations() { return otherRelocations; }
 	
+	public Optional<ChessPieceType> getPromotedPiece() { return promotedPiece; }
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -68,7 +86,8 @@ public class ChessMove {
 			&& origin.equals(other.origin)
 			&& destination.equals(other.destination)
 			&& otherCaptures.equals(other.otherCaptures)
-			&& otherRelocations.equals(other.otherRelocations);
+			&& otherRelocations.equals(other.otherRelocations)
+			&& promotedPiece.equals(other.promotedPiece);
 	}
 	
 	@Override
@@ -78,6 +97,7 @@ public class ChessMove {
 			* destination.hashCode()
 			* otherCaptures.hashCode()
 			* otherRelocations.hashCode()
+			* promotedPiece.hashCode()
 			* 3;
 	}
 }

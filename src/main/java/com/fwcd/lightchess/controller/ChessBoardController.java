@@ -19,6 +19,8 @@ import com.fwcd.lightchess.model.ChessMove;
 import com.fwcd.lightchess.model.ChessPosition;
 import com.fwcd.lightchess.model.PlayerColor;
 import com.fwcd.lightchess.model.piece.ChessPieceModel;
+import com.fwcd.lightchess.model.piece.ChessPieceType;
+import com.fwcd.lightchess.utils.ChessConstants;
 import com.fwcd.lightchess.view.board.ChessBoardView;
 import com.fwcd.lightchess.view.board.ChessFieldView;
 import com.fwcd.lightchess.view.board.FloatingChessPieceView;
@@ -85,8 +87,8 @@ public class ChessBoardController {
 	}
 	
 	private void onMouseDrag(Vector2D pos) {
-		view.getFloating().ifPresent(floating -> {
-			floating.setPos(pos);
+		view.getFloating().ifPresent(dragged -> {
+			dragged.setPos(pos);
 			view.repaint();
 		});
 	}
@@ -95,9 +97,24 @@ public class ChessBoardController {
 		view.getFloating().ifPresent(dragged -> {
 			Optional<ChessPosition> destination = view.toChessPosition(pos);
 			ChessPieceModel piece = dragged.getPiece().getModel();
-			Optional<ChessMove> move = piece.getPossibleMoves(model)
-				.filter(it -> destination.filter(dest -> dest.equals(it.getDestination())).isPresent())
-				.findAny();
+			boolean isPawnPromotion = (piece.getType() == ChessPieceType.PAWN)
+				&& destination
+					.filter(it -> (it.getY() == 0) || (it.getY() == (ChessConstants.RANKS - 1)))
+					.isPresent();
+			Stream<ChessMove> validMoves = piece.getPossibleMoves(model)
+				.filter(it -> destination.filter(dest -> dest.equals(it.getDestination())).isPresent());
+			
+			if (isPawnPromotion) {
+				// In case of pawn promotion, there can be multiple
+				// moves leading to the same destination (these are
+				// the different pieces that the pawn can promote to).
+				// To disambiguate, a dialog is used.
+				ChessPieceType promotionPiece = view.showPromotionDialog(piece.getColor());
+				validMoves = validMoves
+					.filter(it -> it.getPromotedPiece().filter(p -> p.equals(promotionPiece)).isPresent());
+			}
+			
+			Optional<ChessMove> move = validMoves.findAny();
 			
 			dragged.getOrigin().setPieceFloats(false);
 			

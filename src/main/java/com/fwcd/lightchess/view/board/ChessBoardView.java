@@ -16,8 +16,11 @@ import com.fwcd.fructose.swing.RenderPanel;
 import com.fwcd.fructose.swing.Viewable;
 import com.fwcd.lightchess.model.ChessBoardModel;
 import com.fwcd.lightchess.model.ChessPosition;
+import com.fwcd.lightchess.model.PlayerColor;
+import com.fwcd.lightchess.model.piece.ChessPieceType;
 import com.fwcd.lightchess.utils.ChessConstants;
 import com.fwcd.lightchess.view.ImageLoader;
+import com.fwcd.lightchess.view.PawnPromotionDialog;
 
 public class ChessBoardView implements Viewable {
 	private final ChessBoardModel model;
@@ -49,6 +52,10 @@ public class ChessBoardView implements Viewable {
 			}
 			isDark = !isDark;
 		}
+	}
+	
+	public ChessPieceType showPromotionDialog(PlayerColor color)  {
+		return new PawnPromotionDialog(color, imageLoader).show();
 	}
 	
 	public void addMouseHandler(MouseHandler handler) {

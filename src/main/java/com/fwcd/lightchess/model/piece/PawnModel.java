@@ -1,7 +1,9 @@
 package com.fwcd.lightchess.model.piece;
 
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.fwcd.lightchess.model.ChessBoardModel;
@@ -9,6 +11,7 @@ import com.fwcd.lightchess.model.ChessFieldModel;
 import com.fwcd.lightchess.model.ChessMove;
 import com.fwcd.lightchess.model.ChessPosition;
 import com.fwcd.lightchess.model.PlayerColor;
+import com.fwcd.lightchess.utils.ChessConstants;
 import com.fwcd.lightchess.utils.Streams;
 
 public class PawnModel extends AbstractPieceModel {
@@ -25,27 +28,35 @@ public class PawnModel extends AbstractPieceModel {
 	
 	@Override
 	protected Stream<ChessMove> getIntendedMoves(ChessBoardModel board) {
-		// TODO: Promotion
 		Stream.Builder<ChessMove> moves = Stream.builder();
 		ChessPosition origin = getPosition();
 		
 		stepsFrom(origin, board)
 			.filter(it -> !board.fieldAt(it).hasPiece())
-			.map(it -> ChessMove.create(getType(), origin, it))
+			.flatMap(it -> chessMovesOf(origin, it))
 			.forEach(moves::accept);
 		diagonalStepsFrom(origin)
-			.map(it -> {
+			.flatMap(it -> {
 				if (board.fieldAt(it).hasPieceOfColor(getColor().opponent())) {
-					return Optional.of(ChessMove.create(getType(), origin, it));
+					return chessMovesOf(origin, it);
 				} else if (isEnPassantPossible(origin, it, board)) {
-					return Optional.of(ChessMove.createEnPassant(getType(), origin, it, getEnPassantCapturePos(it).orElseThrow(IllegalStateException::new)));
-				} else return Optional.<ChessMove>empty();
+					return Stream.of(ChessMove.createEnPassant(getType(), origin, it, getEnPassantCapturePos(it).orElseThrow(IllegalStateException::new)));
+				} else return Stream.<ChessMove>empty();
 			})
-			.filter(Optional::isPresent)
-			.map(it -> it.orElseThrow(NoSuchElementException::new))
 			.forEach(moves::accept);
 		
 		return moves.build().distinct();
+	}
+	
+	private Stream<ChessMove> chessMovesOf(ChessPosition origin, ChessPosition destination) {
+		int rankY = destination.getY();
+		if ((rankY == 0) || (rankY == (ChessConstants.RANKS - 1))) {
+			// When moving to the final rank, promote the pawn
+			return Arrays.stream(ChessConstants.PROMOTION_PIECES)
+				.map(it -> ChessMove.createPawnPromotion(origin, destination, it));
+		} else {
+			return Stream.of(ChessMove.create(getType(), origin, destination));
+		}
 	}
 	
 	/** 
