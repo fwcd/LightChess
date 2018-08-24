@@ -149,6 +149,6 @@ public class ChessBoardController {
 	}
 	
 	public JComponent getViewComponent() {
-		return view.getView();
+		return view.getComponent();
 	}
 }

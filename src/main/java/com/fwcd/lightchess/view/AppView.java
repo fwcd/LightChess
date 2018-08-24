@@ -6,33 +6,33 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import com.fwcd.fructose.swing.Viewable;
+import com.fwcd.fructose.swing.View;
 import com.fwcd.lightchess.model.AppModel;
 import com.fwcd.lightchess.view.board.ChessBoardView;
 
-public class AppView implements Viewable {
-	private final JPanel view;
+public class AppView implements View {
+	private final JPanel component;
 	private final ChessBoardView chessBoard;
 	private final MatchConfiguratorView matchConfigurator;
 	
 	public AppView(AppModel model) {
-		view = new JPanel();
-		view.setLayout(new BorderLayout());
+		component = new JPanel();
+		component.setLayout(new BorderLayout());
 		
 		chessBoard = new ChessBoardView(model.getChessBoard());
 		matchConfigurator = new MatchConfiguratorView(model.getMatchConfigurator());
 		
 		model.getMatchManager().listenToResults(result -> {
-			JOptionPane.showMessageDialog(view, result.getResultType() + " - " + result.getWinner() + " wins!");
+			JOptionPane.showMessageDialog(component, result.getResultType() + " - " + result.getWinner() + " wins!");
 		});
 		
-		view.add(chessBoard.getView(), BorderLayout.CENTER);
-		view.add(matchConfigurator.getView(), BorderLayout.NORTH);
+		component.add(chessBoard.getComponent(), BorderLayout.CENTER);
+		component.add(matchConfigurator.getComponent(), BorderLayout.NORTH);
 	}
 	
 	@Override
-	public JComponent getView() {
-		return view;
+	public JComponent getComponent() {
+		return component;
 	}
 	
 	public MatchConfiguratorView getMatchConfigurator() { return matchConfigurator; }

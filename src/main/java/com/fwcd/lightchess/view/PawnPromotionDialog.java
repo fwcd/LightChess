@@ -21,7 +21,7 @@ import com.fwcd.lightchess.utils.ChessConstants;
 import com.fwcd.lightchess.view.board.ChessPieceRenderer;
 
 public class PawnPromotionDialog {
-	private final JPanel view;
+	private final JPanel component;
 	private final ImageLoader imgLoader;
 	private final int pieceSideLength = 100; // px
 	private final int padding = 20;
@@ -32,14 +32,14 @@ public class PawnPromotionDialog {
 	public PawnPromotionDialog(PlayerColor color, ImageLoader imgLoader) {
 		this.imgLoader = imgLoader;
 		this.color = color;
-		view = new RenderPanel(this::render);
-		view.setPreferredSize(new Dimension((pieceSideLength + padding) * ChessConstants.PROMOTION_PIECES.length, pieceSideLength));
-		view.addMouseListener(new MouseHandler() {
+		component = new RenderPanel(this::render);
+		component.setPreferredSize(new Dimension((pieceSideLength + padding) * ChessConstants.PROMOTION_PIECES.length, pieceSideLength));
+		component.addMouseListener(new MouseHandler() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int i = e.getX() / (pieceSideLength + padding);
 				selectedPiece = Safe.arrayGet(ChessConstants.PROMOTION_PIECES, i);
-				view.repaint();
+				component.repaint();
 			}
 		});
 	}
@@ -64,7 +64,7 @@ public class PawnPromotionDialog {
 	public ChessPieceType show() {
 		JOptionPane.showMessageDialog(
 			null,
-			view,
+			component,
 			"Select promotion piece",
 			JOptionPane.PLAIN_MESSAGE
 		);

@@ -13,6 +13,6 @@ repositories {
 dependencies {
     implementation 'org.slf4j:slf4j-api:1.7.21'
     implementation 'ch.qos.logback:logback-classic:1.2.3'
-    implementation 'com.github.fwcd:Fructose:0e34d9d11a55be4869f378087b3c25abeba36ea6'
+    implementation 'com.github.fwcd:Fructose:920c990cf65a69e2b13701912e2a5054ca6321ad'
     testImplementation 'junit:junit:4.12'
 }

@@ -13,7 +13,7 @@ import com.fwcd.fructose.geometry.Rectangle2D;
 import com.fwcd.fructose.geometry.Vector2D;
 import com.fwcd.fructose.swing.MouseHandler;
 import com.fwcd.fructose.swing.RenderPanel;
-import com.fwcd.fructose.swing.Viewable;
+import com.fwcd.fructose.swing.View;
 import com.fwcd.lightchess.model.ChessBoardModel;
 import com.fwcd.lightchess.model.ChessPosition;
 import com.fwcd.lightchess.model.PlayerColor;
@@ -22,12 +22,12 @@ import com.fwcd.lightchess.utils.ChessConstants;
 import com.fwcd.lightchess.view.ImageLoader;
 import com.fwcd.lightchess.view.PawnPromotionDialog;
 
-public class ChessBoardView implements Viewable {
+public class ChessBoardView implements View {
 	private final ChessBoardModel model;
 	private final ChessFieldView[][] fields;
 	private final ImageLoader imageLoader = new ImageLoader();
 	private final ChessBoardTheme theme = ChessBoardTheme.WOODEN;
-	private final JPanel view;
+	private final JPanel component;
 	
 	private Set<ChessPosition> highlightedFields = new HashSet<>();
 	private Optional<FloatingChessPieceView> floating = Optional.empty();
@@ -37,7 +37,7 @@ public class ChessBoardView implements Viewable {
 	
 	public ChessBoardView(ChessBoardModel model) {
 		this.model = model;
-		view = new RenderPanel(this::render);
+		component = new RenderPanel(this::render);
 		fields = new ChessFieldView[ChessConstants.RANKS][ChessConstants.FILES];
 		
 		setupFields();
@@ -47,7 +47,7 @@ public class ChessBoardView implements Viewable {
 		boolean isDark = false;
 		for (int y=0; y<ChessConstants.RANKS; y++) {
 			for (int x=0; x<ChessConstants.FILES; x++) {
-				fields[y][x] = new ChessFieldView(model.fieldAt(ChessPosition.at(x, y)), view::repaint, imageLoader, theme, isDark);
+				fields[y][x] = new ChessFieldView(model.fieldAt(ChessPosition.at(x, y)), component::repaint, imageLoader, theme, isDark);
 				isDark = !isDark;
 			}
 			isDark = !isDark;
@@ -59,7 +59,7 @@ public class ChessBoardView implements Viewable {
 	}
 	
 	public void addMouseHandler(MouseHandler handler) {
-		handler.connect(view);
+		handler.connect(component);
 	}
 	
 	public Optional<ChessPosition> toChessPosition(Vector2D pixelPos) {
@@ -69,7 +69,7 @@ public class ChessBoardView implements Viewable {
 	}
 	
 	public void repaint() {
-		view.repaint();
+		component.repaint();
 	}
 	
 	private void render(Graphics2D g2d, Dimension canvasSize) {
@@ -98,7 +98,7 @@ public class ChessBoardView implements Viewable {
 	}
 	
 	@Override
-	public JComponent getView() { return view; }
+	public JComponent getComponent() { return component; }
 	
 	public void setFloating(Optional<FloatingChessPieceView> floating) { this.floating = floating; }
 	

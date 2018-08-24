@@ -10,13 +10,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.MutableComboBoxModel;
 
-import com.fwcd.fructose.swing.Viewable;
+import com.fwcd.fructose.swing.View;
 import com.fwcd.lightchess.model.match.ChessPlayer;
 import com.fwcd.lightchess.model.match.MatchConfiguratorModel;
 import com.fwcd.lightchess.utils.ObservableMap;
 
-public class MatchConfiguratorView implements Viewable {
-	private final JPanel view;
+public class MatchConfiguratorView implements View {
+	private final JPanel component;
 	
 	private final MutableComboBoxModel<String> whiteDropDownModel = new DefaultComboBoxModel<>();
 	private final MutableComboBoxModel<String> blackDropDownModel = new DefaultComboBoxModel<>();
@@ -26,18 +26,18 @@ public class MatchConfiguratorView implements Viewable {
 	private final JComboBox<String> blackDropDown;
 	
 	public MatchConfiguratorView(MatchConfiguratorModel model) {
-		view = new JPanel();
+		component = new JPanel();
 		
 		whiteDropDown = new JComboBox<>(whiteDropDownModel);
 		blackDropDown = new JComboBox<>(blackDropDownModel);
 		
-		view.add(new JLabel("White: "));
-		view.add(whiteDropDown);
-		view.add(new JLabel("Black: "));
-		view.add(blackDropDown);
+		component.add(new JLabel("White: "));
+		component.add(whiteDropDown);
+		component.add(new JLabel("Black: "));
+		component.add(blackDropDown);
 		
 		newMatchButton = new JButton("New Match");
-		view.add(newMatchButton);
+		component.add(newMatchButton);
 		
 		ObservableMap<String, Supplier<ChessPlayer>> playerFactory = model.getPlayerFactory();
 		playerFactory.listenToPut(this::addPlayer);
@@ -60,5 +60,5 @@ public class MatchConfiguratorView implements Viewable {
 	public JButton getNewMatchButton() { return newMatchButton; }
 	
 	@Override
-	public JComponent getView() { return view; }
+	public JComponent getComponent() { return component; }
 }

@@ -29,7 +29,7 @@ public class LightChessMain {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		
-		frame.add(view.getView(), BorderLayout.CENTER);
+		frame.add(view.getComponent(), BorderLayout.CENTER);
 		
 		frame.setVisible(true);
 		LOG.info("Initialized GUI in {} ms", initStopwatch.getMillis());
