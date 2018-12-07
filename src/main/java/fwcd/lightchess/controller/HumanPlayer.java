@@ -1,7 +1,7 @@
 package fwcd.lightchess.controller;
 
 import java.util.ConcurrentModificationException;
-import java.util.Optional;
+import fwcd.fructose.Option;
 
 import fwcd.lightchess.controller.ChessBoardController;
 import fwcd.lightchess.model.ChessBoardModel;
@@ -11,16 +11,16 @@ import fwcd.lightchess.model.match.ChessPlayer;
 
 public class HumanPlayer implements ChessPlayer {
 	private final ChessBoardController chessBoard;
-	private Optional<ChessMove> move = Optional.empty();
+	private Option<ChessMove> move = Option.empty();
 	
 	public HumanPlayer(ChessBoardController chessBoard) {
 		this.chessBoard = chessBoard;
-		chessBoard.getMoveListeners().add(move -> this.move = Optional.of(move));
+		chessBoard.getMoveListeners().add(move -> this.move = Option.of(move));
 	}
 	
 	@Override
 	public ChessMove pickMove(PlayerColor me, ChessBoardModel board) throws InterruptedException {
-		move = Optional.empty();
+		move = Option.empty();
 		chessBoard.setMoveableColors(me);
 		while (!move.isPresent()) {
 			Thread.sleep(100);

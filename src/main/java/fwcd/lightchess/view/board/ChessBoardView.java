@@ -3,7 +3,7 @@ package fwcd.lightchess.view.board;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.util.HashSet;
-import java.util.Optional;
+import fwcd.fructose.Option;
 import java.util.Set;
 
 import javax.swing.JComponent;
@@ -30,7 +30,7 @@ public class ChessBoardView implements View {
 	private final JPanel component;
 	
 	private Set<ChessPosition> highlightedFields = new HashSet<>();
-	private Optional<FloatingChessPieceView> floating = Optional.empty();
+	private Option<FloatingChessPieceView> floating = Option.empty();
 	
 	private int fieldWidth;
 	private int fieldHeight;
@@ -62,7 +62,7 @@ public class ChessBoardView implements View {
 		handler.connect(component);
 	}
 	
-	public Optional<ChessPosition> toChessPosition(Vector2D pixelPos) {
+	public Option<ChessPosition> toChessPosition(Vector2D pixelPos) {
 		int x = (int) pixelPos.getX() / fieldWidth;
 		int y = (int) pixelPos.getY() / fieldHeight;
 		return ChessPosition.ifValidAt(x, y);
@@ -100,9 +100,9 @@ public class ChessBoardView implements View {
 	@Override
 	public JComponent getComponent() { return component; }
 	
-	public void setFloating(Optional<FloatingChessPieceView> floating) { this.floating = floating; }
+	public void setFloating(Option<FloatingChessPieceView> floating) { this.floating = floating; }
 	
-	public Optional<FloatingChessPieceView> getFloating() { return floating; }
+	public Option<FloatingChessPieceView> getFloating() { return floating; }
 	
 	public ChessFieldView[][] getFields() { return fields; }
 	

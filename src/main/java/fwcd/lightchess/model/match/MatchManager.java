@@ -1,6 +1,6 @@
 package fwcd.lightchess.model.match;
 
-import java.util.Optional;
+import fwcd.fructose.Option;
 import java.util.function.Consumer;
 
 import fwcd.fructose.EventListenerList;
@@ -13,8 +13,8 @@ public class MatchManager {
 	private static final Logger LOG = LoggerFactory.getLogger(MatchManager.class);
 	private final ChessBoardModel board;
 	private final EventListenerList<ChessMatchResult> resultListeners = new EventListenerList<>();
-	private Optional<Thread> matchThread = Optional.empty();
-	private Optional<ChessMatch> match = Optional.empty();
+	private Option<Thread> matchThread = Option.empty();
+	private Option<ChessMatch> match = Option.empty();
 	
 	public MatchManager(ChessBoardModel board) {
 		this.board = board;
@@ -42,8 +42,8 @@ public class MatchManager {
 		
 		LOG.info("Starting match");
 		
-		matchThread = Optional.of(newThread);
-		match = Optional.of(newMatch);
+		matchThread = Option.of(newThread);
+		match = Option.of(newMatch);
 		
 		return true;
 	}

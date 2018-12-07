@@ -1,6 +1,6 @@
 package fwcd.lightchess.model.match;
 
-import java.util.Optional;
+import fwcd.fructose.Option;
 
 import fwcd.fructose.EventListenerList;
 import fwcd.lightchess.model.ChessBoardModel;
@@ -45,8 +45,8 @@ public class ChessMatch {
 			whiteHasTurn = !whiteHasTurn;
 		}
 		
-		Optional<PlayerColor> checkmate = board.getCheckmate().map(ChessPieceModel::getColor);
-		Optional<PlayerColor> stalemate = board.getStalemate();
+		Option<PlayerColor> checkmate = board.getCheckmate().map(ChessPieceModel::getColor);
+		Option<PlayerColor> stalemate = board.getStalemate();
 		PlayerColor winner;
 		ChessResultType resultType;
 		

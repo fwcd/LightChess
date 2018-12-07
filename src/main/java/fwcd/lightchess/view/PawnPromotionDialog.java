@@ -4,11 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
-import java.util.Optional;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import fwcd.fructose.Option;
 import fwcd.fructose.Safe;
 import fwcd.fructose.geometry.Vector2D;
 import fwcd.fructose.swing.MouseHandler;
@@ -27,7 +27,7 @@ public class PawnPromotionDialog {
 	private final int padding = 20;
 	
 	private final PlayerColor color;
-	private Optional<ChessPieceType> selectedPiece = Optional.empty();
+	private Option<ChessPieceType> selectedPiece = Option.empty();
 	
 	public PawnPromotionDialog(PlayerColor color, ImageLoader imgLoader) {
 		this.imgLoader = imgLoader;

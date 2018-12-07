@@ -1,7 +1,7 @@
 package fwcd.lightchess.model.piece;
 
 import java.util.Arrays;
-import java.util.Optional;
+import fwcd.fructose.Option;
 import java.util.stream.Stream;
 
 import fwcd.lightchess.model.ChessBoardModel;
@@ -77,12 +77,12 @@ public class PawnModel extends AbstractPieceModel {
 		}
 	}
 	
-	private Optional<ChessPosition> getEnPassantCapturePos(ChessPosition destination) {
+	private Option<ChessPosition> getEnPassantCapturePos(ChessPosition destination) {
 		return destination.up(getStepY());
 	}
 	
 	private boolean isEnPassantPossible(ChessPosition origin, ChessPosition destination, ChessBoardModel board) {
-		Optional<ChessPosition> capturedPos = getEnPassantCapturePos(destination);
+		Option<ChessPosition> capturedPos = getEnPassantCapturePos(destination);
 		return origin.getY() == getEnPassantY()
 			&& capturedPos
 				.flatMap(it -> board.pieceAt(it))
@@ -92,7 +92,7 @@ public class PawnModel extends AbstractPieceModel {
 	
 	private Stream<ChessPosition> stepsFrom(ChessPosition origin, ChessBoardModel board) {
 		int step = getStepY();
-		Optional<ChessPosition> firstStep = origin.down(step);
+		Option<ChessPosition> firstStep = origin.down(step);
 		
 		// Only return two steps when this is the first move and
 		// no piece is directly in front of this pawn

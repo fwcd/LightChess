@@ -3,23 +3,23 @@ package fwcd.lightchess.view.board;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import fwcd.fructose.ListenerList;
+import fwcd.fructose.Option;
 import fwcd.fructose.geometry.Rectangle2D;
-import fwcd.fructose.swing.Rendereable;
+import fwcd.fructose.swing.Renderable;
 import fwcd.lightchess.model.ChessFieldModel;
 import fwcd.lightchess.model.piece.ChessPieceModel;
 import fwcd.lightchess.view.ImageLoader;
 
-public class ChessFieldView implements Rendereable {
+public class ChessFieldView implements Renderable {
 	private final ChessFieldModel model;
 	private final Runnable repainter;
 	private final ImageLoader imageLoader;
 	private final ChessBoardTheme theme;
 	private final boolean isDark;
-	private Optional<ChessPieceView> piece = Optional.empty();
-	private Optional<Rectangle2D> bounds = Optional.empty();
+	private Option<ChessPieceView> piece = Option.empty();
+	private Option<Rectangle2D> bounds = Option.empty();
 	private ListenerList changeListeners = new ListenerList();
 	private boolean pieceFloats = false;
 	
@@ -43,7 +43,7 @@ public class ChessFieldView implements Rendereable {
 		model.observePiece(this::setPiece);
 	}
 	
-	private void setPiece(Optional<ChessPieceModel> pieceModel) {
+	private void setPiece(Option<ChessPieceModel> pieceModel) {
 		piece = pieceModel.map(it -> new ChessPieceView(it, imageLoader));
 		repainter.run();
 	}
@@ -56,11 +56,11 @@ public class ChessFieldView implements Rendereable {
 	
 	public ListenerList getChangeListeners() { return changeListeners; }
 	
-	public void setBounds(Rectangle2D bounds) { this.bounds = Optional.of(bounds); }
+	public void setBounds(Rectangle2D bounds) { this.bounds = Option.of(bounds); }
 	
-	public Optional<Rectangle2D> getBounds() { return bounds; }
+	public Option<Rectangle2D> getBounds() { return bounds; }
 	
-	public Optional<ChessPieceView> getPiece() { return piece; }
+	public Option<ChessPieceView> getPiece() { return piece; }
 	
 	@Override
 	public void render(Graphics2D g2d, Dimension canvasSize) {

@@ -1,6 +1,6 @@
 package fwcd.lightchess.model.match;
 
-import java.util.Optional;
+import fwcd.fructose.Option;
 import java.util.function.Supplier;
 
 import fwcd.lightchess.model.match.ChessPlayer;
@@ -9,16 +9,16 @@ import fwcd.lightchess.utils.ObservableMap;
 public class MatchConfiguratorModel {
 	private final ObservableMap<String, Supplier<ChessPlayer>> playerFactory = new ObservableMap<>();
 	private final MatchManager manager;
-	private Optional<ChessPlayer> white = Optional.empty();
-	private Optional<ChessPlayer> black = Optional.empty();
+	private Option<ChessPlayer> white = Option.empty();
+	private Option<ChessPlayer> black = Option.empty();
 	
 	public MatchConfiguratorModel(MatchManager manager) {
 		this.manager = manager;
 	}
 	
-	public void setWhite(ChessPlayer white) { this.white = Optional.of(white); }
+	public void setWhite(ChessPlayer white) { this.white = Option.of(white); }
 	
-	public void setBlack(ChessPlayer black) { this.black = Optional.of(black); }
+	public void setBlack(ChessPlayer black) { this.black = Option.of(black); }
 	
 	public boolean createMatch() {
 		return manager.createMatch(

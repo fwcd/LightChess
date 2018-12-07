@@ -2,7 +2,7 @@ package fwcd.lightchess.model;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
+import fwcd.fructose.Option;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
@@ -48,7 +48,7 @@ public class ChessBoardModel implements Copyable<ChessBoardModel> {
 	public void clear() {
 		for (ChessFieldModel[] rank : fields) {
 			for (ChessFieldModel field : rank) {
-				field.setPiece(Optional.empty());
+				field.setPiece(Option.empty());
 			}
 		}
 	}
@@ -77,16 +77,16 @@ public class ChessBoardModel implements Copyable<ChessBoardModel> {
 		}
 	}
 	
-	public Optional<KingModel> getCheckedKing() {
-		return kings()
+	public Option<KingModel> getCheckedKing() {
+		return Option.of(kings()
 			.filter(it -> it.isChecked(this))
-			.findAny();
+			.findAny());
 	}
 	
-	public Optional<PlayerColor> getWinner() {
+	public Option<PlayerColor> getWinner() {
 		return getCheckmate()
 			.map(KingModel::getColor)
-			.map(Optional::of)
+			.map(Option::of)
 			.orElseGet(this::getStalemate)
 			.map(PlayerColor::opponent);
 	}
@@ -95,17 +95,17 @@ public class ChessBoardModel implements Copyable<ChessBoardModel> {
 		return getCheckmate().isPresent() || getStalemate().isPresent();
 	}
 	
-	public Optional<KingModel> getCheckmate() {
-		return kings()
+	public Option<KingModel> getCheckmate() {
+		return Option.of(kings()
 			.filter(it -> it.isChecked(this) && !canMove(it.getColor()))
-			.findAny();
+			.findAny());
 	}
 	
-	public Optional<PlayerColor> getStalemate() {
+	public Option<PlayerColor> getStalemate() {
 		// TODO: Implement special stalemate rules
-		return Arrays.stream(PlayerColor.values())
+		return Option.of(Arrays.stream(PlayerColor.values())
 			.filter(it -> !canMove(it))
-			.findAny();
+			.findAny());
 	}
 	
 	public ChessBoardModel spawnChild(ChessMove move) {
@@ -121,22 +121,22 @@ public class ChessBoardModel implements Copyable<ChessBoardModel> {
 		ChessFieldModel destField = fieldAt(destination);
 		ChessPieceModel piece = originField.getPiece()
 			.orElseThrow(() -> new UnsupportedOperationException("Tried to move non-existent chess piece at " + origin));
-		Optional<ChessPieceModel> promotedPiece = move.getPromotedPiece()
+		Option<ChessPieceModel> promotedPiece = move.getPromotedPiece()
 			.map(it -> it.construct(piece.getColor(), destination));
 		
 		piece.moveTo(destination);
 		
-		originField.setPiece(Optional.empty());
+		originField.setPiece(Option.empty());
 		destField.setPiece(promotedPiece.orElse(piece));
 		for (ChessPosition otherCapture : move.getOtherCaptures()) {
-			fieldAt(otherCapture).setPiece(Optional.empty());
+			fieldAt(otherCapture).setPiece(Option.empty());
 		}
 		for (Map.Entry<ChessPosition, ChessPosition> otherRelocation : move.getOtherRelocations().entrySet()) {
 			ChessFieldModel relocationOriginField = fieldAt(otherRelocation.getKey());
 			ChessFieldModel relocationDestField = fieldAt(otherRelocation.getValue());
 			ChessPieceModel relocatedPiece = relocationOriginField.getPiece()
 				.orElseThrow(() -> new UnsupportedOperationException("Tried to relocate non-existent chess piece at " + otherRelocation.getKey()));
-			relocationOriginField.setPiece(Optional.empty());
+			relocationOriginField.setPiece(Option.empty());
 			relocationDestField.setPiece(relocatedPiece);
 			relocatedPiece.moveTo(relocationDestField.getPosition());
 		}
@@ -156,7 +156,7 @@ public class ChessBoardModel implements Copyable<ChessBoardModel> {
 		return fields[position.getY()][position.getX()];
 	}
 	
-	public Optional<ChessPieceModel> pieceAt(ChessPosition position) {
+	public Option<ChessPieceModel> pieceAt(ChessPosition position) {
 		return fieldAt(position).getPiece();
 	}
 	

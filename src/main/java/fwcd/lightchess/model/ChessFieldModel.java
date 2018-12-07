@@ -1,6 +1,6 @@
 package fwcd.lightchess.model;
 
-import java.util.Optional;
+import fwcd.fructose.Option;
 import java.util.function.Consumer;
 
 import fwcd.fructose.Copyable;
@@ -10,14 +10,14 @@ import fwcd.lightchess.model.piece.ChessPieceType;
 
 public class ChessFieldModel implements Copyable<ChessFieldModel> {
 	private final ChessPosition position;
-	private Observable<Optional<ChessPieceModel>> piece;
+	private Observable<Option<ChessPieceModel>> piece;
 	
 	public ChessFieldModel(ChessPosition position) {
 		this.position = position;
-		piece = new Observable<>(Optional.empty());
+		piece = new Observable<>(Option.empty());
 	}
 	
-	private ChessFieldModel(ChessPosition position, Optional<ChessPieceModel> piece) {
+	private ChessFieldModel(ChessPosition position, Option<ChessPieceModel> piece) {
 		this.position = position;
 		this.piece = new Observable<>(piece);
 	}
@@ -32,18 +32,18 @@ public class ChessFieldModel implements Copyable<ChessFieldModel> {
 		return piece.get().filter(it -> it.getType().equals(pieceType)).isPresent();
 	}
 	
-	public void observePiece(Consumer<Optional<ChessPieceModel>> observer) {
+	public void observePiece(Consumer<Option<ChessPieceModel>> observer) {
 		piece.listen(observer);
 		observer.accept(piece.get());
 	}
 	
 	public ChessPosition getPosition() { return position; }
 	
-	public void setPiece(Optional<ChessPieceModel> piece) { this.piece.set(piece); }
+	public void setPiece(Option<ChessPieceModel> piece) { this.piece.set(piece); }
 	
-	public void setPiece(ChessPieceModel piece) { this.piece.set(Optional.of(piece)); }
+	public void setPiece(ChessPieceModel piece) { this.piece.set(Option.of(piece)); }
 	
-	public Optional<ChessPieceModel> getPiece() { return piece.get(); }
+	public Option<ChessPieceModel> getPiece() { return piece.get(); }
 	
 	@Override
 	public ChessFieldModel copy() {

@@ -3,7 +3,7 @@ package fwcd.lightchess.controller;
 import java.awt.event.MouseEvent;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Optional;
+import fwcd.fructose.Option;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -75,7 +75,7 @@ public class ChessBoardController {
 							FloatingChessPieceView dragged = new FloatingChessPieceView(piece, field, pos, offset);
 							
 							field.setPieceFloats(true);
-							view.setFloating(Optional.of(dragged));
+							view.setFloating(Option.of(dragged));
 							onDragStart(dragged);
 						}
 						
@@ -95,7 +95,7 @@ public class ChessBoardController {
 	
 	private void onMouseUp(Vector2D pos) {
 		view.getFloating().ifPresent(dragged -> {
-			Optional<ChessPosition> destination = view.toChessPosition(pos);
+			Option<ChessPosition> destination = view.toChessPosition(pos);
 			ChessPieceModel piece = dragged.getPiece().getModel();
 			boolean isPawnPromotion = (piece.getType() == ChessPieceType.PAWN)
 				&& destination
@@ -114,7 +114,7 @@ public class ChessBoardController {
 					.filter(it -> it.getPromotedPiece().filter(p -> p.equals(promotionPiece)).isPresent());
 			}
 			
-			Optional<ChessMove> move = validMoves.findAny();
+			Option<ChessMove> move = Option.of(validMoves.findAny());
 			
 			dragged.getOrigin().setPieceFloats(false);
 			
@@ -125,7 +125,7 @@ public class ChessBoardController {
 				dragged.getOrigin().getModel().setPiece(piece);
 			}
 		});
-		view.setFloating(Optional.empty());
+		view.setFloating(Option.empty());
 	}
 	
 	private void onDragStart(FloatingChessPieceView dragged) {

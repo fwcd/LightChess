@@ -1,6 +1,6 @@
 package fwcd.lightchess.model;
 
-import java.util.Optional;
+import fwcd.fructose.Option;
 
 import fwcd.lightchess.utils.ChessConstants;
 
@@ -37,31 +37,31 @@ public class ChessPosition {
 		return new ChessPosition(x, y);
 	}
 	
-	public static Optional<ChessPosition> ifValidAt(int x, int y) {
+	public static Option<ChessPosition> ifValidAt(int x, int y) {
 		if (isValidX(x) && isValidY(y)) {
-			return Optional.of(new ChessPosition(x, y));
-		} else return Optional.empty();
+			return Option.of(new ChessPosition(x, y));
+		} else return Option.empty();
 	}
 	
-	public Optional<ChessPosition> plus(int dx, int dy) {
+	public Option<ChessPosition> plus(int dx, int dy) {
 		return ChessPosition.ifValidAt(x + dx, y + dy);
 	}
 	
-	public Optional<ChessPosition> minus(int dx, int dy) {
+	public Option<ChessPosition> minus(int dx, int dy) {
 		return plus(-dx, -dy);
 	}
 	
 	/** Equivalent to minusY */
-	public Optional<ChessPosition> up(int delta) { return plus(0, -delta); }
+	public Option<ChessPosition> up(int delta) { return plus(0, -delta); }
 	
 	/** Equivalent to plusX */
-	public Optional<ChessPosition> right(int delta) { return plus(delta, 0); }
+	public Option<ChessPosition> right(int delta) { return plus(delta, 0); }
 	
 	/** Equivalent to plusY */
-	public Optional<ChessPosition> down(int delta) { return plus(0, delta); }
+	public Option<ChessPosition> down(int delta) { return plus(0, delta); }
 	
 	/** Equivalent to minusX */
-	public Optional<ChessPosition> left(int delta) { return plus(-delta, 0); }
+	public Option<ChessPosition> left(int delta) { return plus(-delta, 0); }
 	
 	public int getX() { return x; }
 	
