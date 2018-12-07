@@ -3,7 +3,7 @@ plugins {
     id 'application'
 }
 
-mainClassName = 'com.fwcd.lightchess.LightChessMain'
+mainClassName = 'fwcd.lightchess.LightChessMain'
 
 repositories {
     jcenter()
