@@ -6,11 +6,11 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import fwcd.fructose.swing.View;
+import fwcd.fructose.swing.Viewable;
 import fwcd.lightchess.model.AppModel;
 import fwcd.lightchess.view.board.ChessBoardView;
 
-public class AppView implements View {
+public class AppView implements Viewable {
 	private final JPanel component;
 	private final ChessBoardView chessBoard;
 	private final MatchConfiguratorView matchConfigurator;

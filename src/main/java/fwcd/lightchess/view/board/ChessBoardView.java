@@ -13,7 +13,7 @@ import fwcd.fructose.geometry.Rectangle2D;
 import fwcd.fructose.geometry.Vector2D;
 import fwcd.fructose.swing.MouseHandler;
 import fwcd.fructose.swing.RenderPanel;
-import fwcd.fructose.swing.View;
+import fwcd.fructose.swing.Viewable;
 import fwcd.lightchess.model.ChessBoardModel;
 import fwcd.lightchess.model.ChessPosition;
 import fwcd.lightchess.model.PlayerColor;
@@ -22,7 +22,7 @@ import fwcd.lightchess.utils.ChessConstants;
 import fwcd.lightchess.view.ImageLoader;
 import fwcd.lightchess.view.PawnPromotionDialog;
 
-public class ChessBoardView implements View {
+public class ChessBoardView implements Viewable {
 	private final ChessBoardModel model;
 	private final ChessFieldView[][] fields;
 	private final ImageLoader imageLoader = new ImageLoader();

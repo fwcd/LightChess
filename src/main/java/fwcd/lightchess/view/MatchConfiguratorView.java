@@ -10,12 +10,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.MutableComboBoxModel;
 
-import fwcd.fructose.swing.View;
+import fwcd.fructose.swing.Viewable;
 import fwcd.lightchess.model.match.ChessPlayer;
 import fwcd.lightchess.model.match.MatchConfiguratorModel;
 import fwcd.lightchess.utils.ObservableMap;
 
-public class MatchConfiguratorView implements View {
+public class MatchConfiguratorView implements Viewable {
 	private final JPanel component;
 	
 	private final MutableComboBoxModel<String> whiteDropDownModel = new DefaultComboBoxModel<>();
